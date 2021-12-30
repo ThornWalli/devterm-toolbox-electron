@@ -265,6 +265,14 @@ function exampleData () {
     // { type: 'setWordGap', value: 10 },
     // { type: 'setDensity', value: 7 },
 
+    { type: 'image' },
+    { type: 'reset' },
+    { type: 'setAlign', value: ALIGN.CENTER },
+    { type: 'image' },
+    { type: 'setAlign', value: ALIGN.RIGHT },
+    { type: 'image' },
+    { type: 'reset' },
+
     { type: 'font', value: FONT.SIZE_8_16_THIN_1 },
 
     ...writeHeadline('Text:'),

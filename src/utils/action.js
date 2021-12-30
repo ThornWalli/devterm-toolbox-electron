@@ -13,6 +13,7 @@ import ActionReset from '@/components/controls/actions/Reset';
 import ActionNativeText from '@/components/controls/actions/NativeText';
 import ActionFeedPitch from '@/components/controls/actions/FeedPitch';
 import PreviewTextCanvas from '@/components/preview/TextCanvas';
+import PreviewImageCanvas from '@/components/preview/ImageCanvas';
 import PreviewFeedPitch from '@/components/preview/FeedPitch';
 import { DropDownOptionDescription } from '@/components/base/DropDown';
 
@@ -126,6 +127,12 @@ export const executeAction = (action, options, colors) => {
 
           colors
         }
+      };
+    case 'image':
+      return {
+        component: PreviewImageCanvas,
+        options: { ...options },
+        props: { ...action, colors }
       };
     case 'text':
       return {
