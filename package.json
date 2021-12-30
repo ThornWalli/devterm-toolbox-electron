@@ -1,0 +1,49 @@
+{
+  "name": "devterm-toolbox-electron",
+  "version": "0.0.0",
+  "license": "MIT",
+  "scripts": {
+    "dev": "electron-webpack dev",
+    "compile": "electron-webpack",
+    "dist": "yarn compile && electron-builder",
+    "dist:dir": "yarn dist --dir -c.compression=store -c.mac.identity=null"
+  },
+  "dependencies": {
+    "node-devterm": "github:ThornWalli/node-devterm#feature/init",
+    "source-map-support": "^0.5.16",
+    "vue": "^2.6.14",
+    "vue-svg-loader": "^0.16.0"
+  },
+  "devDependencies": {
+    "@babel/eslint-parser": "^7.16.3",
+    "css-loader": "^5.2.7",
+    "cssnano": "^4.1.11",
+    "electron": "8.2.0",
+    "electron-builder": "^22.4.1",
+    "electron-webpack": "^2.8.2",
+    "electron-webpack-eslint": "^6.0.0",
+    "electron-webpack-vue": "^2.4.0",
+    "eslint": "^7.32.0",
+    "eslint-config-standard": "^16.0.3",
+    "eslint-plugin-html": "^6.2.0",
+    "eslint-plugin-import": "^2.25.3",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^5.2.0",
+    "eslint-plugin-unicorn": "^39.0.0",
+    "eslint-plugin-vue": "^8.2.0",
+    "postcss": "^7.0.39",
+    "postcss-html": "^1.3.0",
+    "postcss-loader": "^4.3.0",
+    "postcss-nesting": "^7.0.1",
+    "postcss-preset-env": "^6.7.0",
+    "stylelint": "^14.1.0",
+    "stylelint-config-recess-order": "^3.0.0",
+    "stylelint-config-standard": "^24.0.0",
+    "webpack": "~4.42.1"
+  },
+  "electronWebpack": {
+    "renderer": {
+      "webpackConfig": "webpack/renderer.config.js"
+    }
+  }
+}

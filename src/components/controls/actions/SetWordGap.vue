@@ -1,0 +1,49 @@
+<template>
+  <controls-action-item class="action-set-word-gap" :title="title" v-bind="$attrs" v-on="$listeners">
+    <template #head>
+      <slot name="head" />
+    </template>
+    <template #default>
+      <input-text-field
+        step="1"
+        min="0"
+        type="number"
+        :value="value"
+        :label="label"
+        @input="$emit('input', $event)"
+      />
+    </template>
+  </controls-action-item>
+</template>
+
+<script>
+import ControlsActionItem from '@/components/controls/ActionItem';
+import InputTextField from '@/components/inputs/TextField';
+export default {
+  components: { ControlsActionItem, InputTextField },
+  inheritAttrs: false,
+
+  props: {
+    value: {
+      type: [Number, String],
+      default: 0
+    }
+  },
+  data () {
+    return {
+      label: 'Set Word-Gap'
+    };
+  },
+  computed: {
+    title () {
+      return `Word-Gap: ${this.value}`;
+    }
+  }
+};
+</script>
+
+<style lang="postcss" scoped>
+.action-set-word-gap {
+  /* empty */
+}
+</style>
