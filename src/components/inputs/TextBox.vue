@@ -1,6 +1,6 @@
 <template>
   <base-input-label top-label class="input-text-box" :text="label">
-    <textarea v-bind="$attrs" :value="value" @input="$emit('input', $event.target.value)" />
+    <textarea v-bind="$attrs" :value="value" @input="onInput" />
   </base-input-label>
 </template>
 
@@ -19,6 +19,11 @@ export default {
     value: {
       type: String,
       default: ''
+    }
+  },
+  methods: {
+    onInput (e) {
+      this.$emit('input', e.target.value);
     }
   }
 

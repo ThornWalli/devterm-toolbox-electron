@@ -142,11 +142,6 @@ export const executeAction = (action, options, colors) => {
       };
 
     case 'feedPitch':
-      console.log({
-        component: PreviewFeedPitch,
-        options: { ...options },
-        props: { ...action.value }
-      });
       return {
         component: PreviewFeedPitch,
         options: { ...options },

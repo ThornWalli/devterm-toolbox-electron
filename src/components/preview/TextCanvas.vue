@@ -43,7 +43,6 @@ export default {
       }[this.options.align];
     },
     font () {
-      console.log(FONT_MAP[Number(this.options.font)]);
       return FONT_MAP[Number(this.options.font)];
     }
   },
@@ -56,7 +55,6 @@ export default {
     this.$el.width = this.width;
     this.ctx = this.$el.getContext('2d');
     this.render();
-    console.log(this.colors);
   },
   methods: {
     getColor (opacity) {
@@ -95,9 +93,7 @@ export default {
         ctx.textAlign = align;
         const rows = text.split('\n').map(text => prepareText(ctx, text, 0, 0, size, width)).flat();
 
-        // const rows = prepareText(ctx, text, 0, 0, size, width);
         const dimension = [this.width, rows.length * size];
-        console.log(dimension, rows.length);
         this.$el.width = dimension[0];
         this.$el.height = dimension[1] * lineHeight + margin[0] + margin[2];
         // ctx.fillStyle = this.getColor(1 - Math.pow(1 - (this.options.density / MAX_DENSITY), 3));
@@ -105,8 +101,7 @@ export default {
         ctx.fillStyle = this.getColor(this.options.density / MAX_DENSITY);
 
         ctx.font = `${size}px "${this.font.fontFamily}"`;
-        console.log(`${size}px "${this.font.fontFamily}"`);
-        // ctx.font = `${size}px "Px437_CompaqThin_8x16"`;
+
         ctx.textBaseline = 'top';
         ctx.textAlign = align;
         ctx.translate(0, margin[0]);

@@ -1,5 +1,5 @@
 <template>
-  <controls-action-item class="action-native-text" :title="title" v-bind="$attrs" v-on="$listeners">
+  <controls-action-item class="action-native-text" :title="title" v-bind="$attrs" v-on="Object.assign({}, $listeners, {input:[]})">
     <template #head>
       <slot name="head" />
     </template>
@@ -10,7 +10,7 @@
         :label="null"
         :value="value"
         rows="10"
-        @input="$emit('input', $event)"
+        @input="onInput"
       />
       <div class="footer">
         <span>Rows: <span>{{ value.split('\n').length }}</span></span>
@@ -39,6 +39,11 @@ export default {
   computed: {
     title () {
       return `Text: ${this.value.slice(0, 16)}…`;
+    }
+  },
+  methods: {
+    onInput (e) {
+      this.$emit('input', e);
     }
   }
 };
