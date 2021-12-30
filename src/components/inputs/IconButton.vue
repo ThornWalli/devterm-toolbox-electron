@@ -36,5 +36,10 @@ export default {
   & >>> svg {
     fill: currentColor;
   }
+
+  &:focus {
+    color: var(--color-secondary);
+    background: var(--color-primary);
+  }
 }
 </style>

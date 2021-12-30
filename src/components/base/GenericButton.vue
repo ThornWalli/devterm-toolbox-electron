@@ -19,10 +19,11 @@ export default {
   padding: 0;
   font-size: 1rem;
   color: currentColor;
+  cursor: pointer;
   background: none;
   border: none;
   border-radius: 0;
-  appearance: none;
   outline: none;
+  appearance: none;
 }
 </style>

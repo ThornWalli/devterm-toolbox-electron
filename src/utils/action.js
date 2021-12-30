@@ -10,7 +10,8 @@ import ActionSetLineSpace from '@/components/controls/actions/SetLineSpace';
 import ActionSetWordGap from '@/components/controls/actions/SetWordGap';
 import ActionSetDensity from '@/components/controls/actions/SetDensity';
 import ActionReset from '@/components/controls/actions/Reset';
-import ActionNativeText from '@/components/controls/actions/NativeText';
+import ActionText from '@/components/controls/actions/Text';
+import ActionImage from '@/components/controls/actions/Image';
 import ActionFeedPitch from '@/components/controls/actions/FeedPitch';
 import PreviewTextCanvas from '@/components/preview/TextCanvas';
 import PreviewImageCanvas from '@/components/preview/ImageCanvas';
@@ -37,7 +38,8 @@ export const getComponentByType = (type) => {
     setAlign: ActionSetAlign,
     setFont: ActionSetFont,
     setDensity: ActionSetDensity,
-    text: ActionNativeText,
+    text: ActionText,
+    image: ActionImage,
     reset: ActionReset,
     cutLine: ActionCutLine,
     setLineSpace: ActionSetLineSpace,
@@ -114,6 +116,7 @@ export const executeAction = (action, options, colors) => {
       break;
     case 'cutLine':
       return {
+        id: action.id,
         component: PreviewTextCanvas,
         options: { ...options, margin: 0, wordGap: 0, lineSpace: 0, density: DEFAULT_DENSITY },
         props: {
@@ -129,13 +132,21 @@ export const executeAction = (action, options, colors) => {
         }
       };
     case 'image':
+      console.log({
+        id: action.id,
+        component: PreviewImageCanvas,
+        options: { ...options },
+        props: { ...action, colors }
+      });
       return {
+        id: action.id,
         component: PreviewImageCanvas,
         options: { ...options },
         props: { ...action, colors }
       };
     case 'text':
       return {
+        id: action.id,
         component: PreviewTextCanvas,
         options: { ...options },
         props: { ...action, colors }
@@ -143,6 +154,7 @@ export const executeAction = (action, options, colors) => {
 
     case 'feedPitch':
       return {
+        id: action.id,
         component: PreviewFeedPitch,
         options: { ...options },
         props: { ...action.value }

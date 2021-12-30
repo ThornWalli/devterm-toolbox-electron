@@ -30,7 +30,7 @@ export default {
 </script>
 
 <style lang="postcss" scoped>
-.inputs-text {
+.input-text-field {
   /* empty */
 }
 
@@ -50,6 +50,15 @@ input {
 
   &[type="number"] {
     font-weight: bold;
+  }
+
+  &::placeholder {
+    color: var(--color-primary-50);
+  }
+
+  &[disabled] {
+    cursor: not-allowed;
+    opacity: 0.6;
   }
 }
 </style>

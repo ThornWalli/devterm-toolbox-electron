@@ -63,7 +63,7 @@
     "unicorn/prefer-includes": "error",
     "unicorn/prefer-starts-ends-with": "error",
     "unicorn/prefer-text-content": "error",
-    "unicorn/prefer-type-error": "error",
+    "unicorn/prefer-type-error": "off",
     "unicorn/throw-new-error": "error",
     "vue/multi-word-component-names": "off"
   }

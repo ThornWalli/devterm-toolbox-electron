@@ -1,5 +1,5 @@
 <template>
-  <controls-action-item class="action-set-align" :title="title" v-bind="$attrs" v-on="$listeners">
+  <controls-action-item class="action-set-align" :title="title" v-bind="$attrs" v-on="Object.assign({}, $listeners, {input:[]})">
     <template #head>
       <slot name="head" />
     </template>

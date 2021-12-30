@@ -4,9 +4,9 @@
 import Vue from 'vue';
 import App from '@/components/App.vue';
 
-console.log(Object.keys(App));
 Vue.component('App', App);
-const app = new Vue({
+// eslint-disable-next-line no-new
+new Vue({
   el: '#app',
   data: {
     message: 'Hello Vue!'
@@ -14,4 +14,4 @@ const app = new Vue({
   template: '<app />'
 });
 
-console.log(app);
+console.log(require('electron'));

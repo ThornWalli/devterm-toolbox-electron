@@ -1,5 +1,6 @@
 {
   "name": "devterm-toolbox-electron",
+  "productName": "devterm-toolbox",
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {

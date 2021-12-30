@@ -5,6 +5,7 @@
 <script>
 import { createCanvas, prepareCanvasForPrint } from 'node-devterm/utils/canvas';
 import { ALIGN } from 'node-devterm/config';
+import { preparePreview } from '@/utils/canvas';
 
 export default {
   props: {
@@ -12,6 +13,14 @@ export default {
       type: Object,
       default () {
         return { base: [255, 0, 0] };
+      }
+    },
+    value: {
+      type: Object,
+      default () {
+        return {
+          file: null
+        };
       }
     },
     width: {
@@ -32,54 +41,43 @@ export default {
     };
   },
 
-  //   watch: {
-  //     value () {
-  //       this.render();
-  //     }
-  //   },
+  watch: {
+    async value () {
+      if (this.value.file) {
+        await this.changeImage(this.value.file);
+      }
+      this.render();
+    }
+  },
   async mounted () {
     this.$el.width = this.width;
     this.ctx = this.$el.getContext('2d');
 
-    await new Promise(resolve => {
-      this.img = document.createElement('img');
-      this.img.onload = () => resolve();
-      this.img.src = require('@/assets/img/devterm.jpeg').default;
-    });
-    this.$el.height = this.img.naturalHeight;
-
+    this.value.file && await this.changeImage(this.value.file);
     this.render();
   },
 
   methods: {
+    changeImage (url) {
+      return new Promise(resolve => {
+        this.img = document.createElement('img');
+        this.img.onload = () => {
+          this.$el.height = this.img.naturalHeight;
+          resolve();
+        };
+        this.img.src = url;
+      });
+    },
     getColor (opacity) {
       return `rgb(${this.colors.primary.join(' ')} / ${opacity * 100}%)`;
     },
     render () {
       global.requestAnimationFrame(() => {
         const imageCanvas = createCanvas(this.img.naturalWidth, this.img.naturalHeight);
-        // imageCanvas.width = this.img.naturalWidth;
-        // imageCanvas.height = this.img.naturalHeight;
         const imageContext = imageCanvas.getContext('2d');
         imageContext.drawImage(this.img, 0, 0);
-        const invertColors = (data) => {
-          for (let i = 0; i < data.length; i += 4) {
-            // data[i] = data[i] ^ 255; // Invert Red
-            // data[i + 1] = data[i + 1] ^ 255; // Invert Green
-            // data[i + 2] = data[i + 2] ^ 255; // Invert Blue
-            if (data[i] === 0 && data[i + 1] === 0 && data[i + 2] === 0) {
-              data[i] = this.colors.primary[0];
-              data[i + 1] = this.colors.primary[1];
-              data[i + 2] = this.colors.primary[2];
-            }
-            if (data[i] === 255 && data[i + 1] === 255 && data[i + 2] === 255) {
-              data[i] = this.colors.secondary[0];
-              data[i + 1] = this.colors.secondary[1];
-              data[i + 2] = this.colors.secondary[2];
-            }
-          }
-        };
-        const preparedCanvas = prepareCanvasForPrint(imageCanvas, { grayscale: true, width: 100 });
+
+        const preparedCanvas = prepareCanvasForPrint(imageCanvas, this.value);
 
         const ctx = this.ctx;
         ctx.canvas.width = this.width;
@@ -99,13 +97,8 @@ export default {
             x += margin;
             break;
         }
-
         ctx.drawImage(preparedCanvas, x, 0);
-        const imageData = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
-        invertColors(imageData.data);
-
-        // Update the canvas with the new data
-        ctx.putImageData(imageData, 0, 0);
+        preparePreview(ctx.canvas, this.colors);
       });
     }
   }

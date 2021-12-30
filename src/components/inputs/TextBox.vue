@@ -49,5 +49,14 @@ textarea {
   border: none;
   outline: none;
   appearance: none;
+
+  &::placeholder {
+    color: var(--color-primary-50);
+  }
+
+  &[disabled] {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
 }
 </style>

@@ -35,6 +35,11 @@ export default {
     border-radius: 0;
     appearance: none;
     outline: none;
+
+    &[disabled] {
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
   }
 }
 </style>

@@ -1,6 +1,6 @@
 import * as path from 'path';
 import { format as formatUrl } from 'url';
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, Menu } from 'electron';
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
@@ -8,7 +8,16 @@ const isDevelopment = process.env.NODE_ENV !== 'production';
 let mainWindow;
 
 function createMainWindow () {
-  const window = new BrowserWindow({ webPreferences: { nodeIntegration: true } });
+  const window = new BrowserWindow({
+    webPreferences: { nodeIntegration: true, fullscreen: true },
+    frame: false,
+    title: 'test',
+    titleBarStyle: 'hidden',
+    titleBarOverlay: {
+      color: '#2f3241',
+      symbolColor: '#74b1be'
+    }
+  });
 
   if (isDevelopment) {
     window.webContents.openDevTools();
@@ -57,3 +66,44 @@ app.on('activate', () => {
 app.on('ready', () => {
   mainWindow = createMainWindow();
 });
+
+const isMac = process.platform === 'darwin'; ;
+
+const template = [
+  // { role: 'appMenu' }
+  ...(isMac
+    ? [{
+        label: 'TEST',
+        submenu: [
+          { role: 'about' },
+          { type: 'separator' },
+          // { role: 'services' },
+          // { type: 'separator' },
+          // { role: 'hide' },
+          // { role: 'hideOthers' },
+          // { role: 'unhide' },
+          { role: 'reload' },
+          { role: 'forceReload' },
+          { role: 'toggleDevTools' },
+          { role: 'togglefullscreen' },
+          { type: 'separator' },
+          { role: 'quit' }
+        ]
+      }]
+    : []),
+  {
+    role: 'help',
+    submenu: [
+      {
+        label: 'Learn More',
+        click: async () => {
+          const { shell } = require('electron');
+          await shell.openExternal('https://electronjs.org');
+        }
+      }
+    ]
+  }
+];
+
+const menu = Menu.buildFromTemplate(template);
+Menu.setApplicationMenu(menu);

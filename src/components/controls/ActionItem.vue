@@ -1,14 +1,14 @@
 <template>
   <div class="controls-action-item" :class="{'focus':focus || active, 'can-open': $slots.default }" focusable v-on="$listeners">
     <div class="head">
-      <div class="title" @click="onClick">
+      <base-generic-button class="title" @click="onClick">
         <span>{{ title }}</span>
-      </div>
+      </base-generic-button>
       <div v-if="$slots.head">
         <slot name="head" />
       </div>
     </div>
-    <div v-if="active" class="content">
+    <div v-if="$slots.default && active" class="content">
       <span @click="$emit('active', false)" />
       <div>
         <slot />
@@ -21,9 +21,10 @@
 </template>
 
 <script>
+import BaseGenericButton from '@/components/base/GenericButton';
 import InputTextButton from '@/components/inputs/TextButton';
 export default {
-  components: { InputTextButton },
+  components: { BaseGenericButton, InputTextButton },
 
   props: {
     itemStates: {
@@ -45,11 +46,6 @@ export default {
       default: 'Action Item'
     }
   },
-  data () {
-    return {
-      // active: false
-    };
-  },
   computed: {
     active () {
       return this.itemStates[this.id];
@@ -69,12 +65,13 @@ export default {
 <style lang="postcss" scoped>
 .controls-action-item {
   display: block;
-  opacity: 0.6;
+
+  /* opacity: 0.6;
 
   &:hover,
   &:focus {
     opacity: 1;
-  }
+  } */
 
   & > .head {
     display: flex;
@@ -85,6 +82,14 @@ export default {
       flex: 1;
       padding: 0 calc(4 / 12 * 1em);
       font-size: calc(12 / 16 * 1em);
+      text-align: left;
+      opacity: 0.6;
+      transition: opacity 0.2s;
+
+      &:hover,
+      &:focus {
+        opacity: 1;
+      }
     }
   }
 
@@ -92,6 +97,12 @@ export default {
     & > .head {
       & .title {
         cursor: pointer;
+
+        &:hover,
+        &:focus {
+          color: var(--color-secondary);
+          background: var(--color-primary);
+        }
       }
     }
   }

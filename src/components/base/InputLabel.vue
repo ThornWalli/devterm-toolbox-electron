@@ -1,6 +1,6 @@
 <template>
   <label class="base-input-label" :class="{'top-label': topLabel}">
-    <span v-if="text">{{ text }}</span>
+    <span v-if="text" class="label">{{ text }}</span>
     <slot />
   </label>
 </template>
@@ -26,7 +26,7 @@ export default {
   display: flex;
   align-items: center;
 
-  & > span {
+  & > .label {
     min-width: calc(120 / 12 * 1em);
     font-size: calc(12 / 16 * 1em);
 
@@ -39,7 +39,7 @@ export default {
     flex-direction: column;
     align-items: unset;
 
-    & > span {
+    & > .label {
       margin-bottom: calc(10 / 12 * 1em);
     }
   }

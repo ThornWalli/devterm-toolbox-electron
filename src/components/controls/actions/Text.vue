@@ -1,5 +1,5 @@
 <template>
-  <controls-action-item class="action-native-text" :title="title" v-bind="$attrs" v-on="Object.assign({}, $listeners, {input:[]})">
+  <controls-action-item class="action-text" :title="title" v-bind="$attrs" v-on="Object.assign({}, $listeners, {input:[]})">
     <template #head>
       <slot name="head" />
     </template>
@@ -50,7 +50,7 @@ export default {
 </script>
 
 <style lang="postcss" scoped>
-.action-native-text {
+.action-text {
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
