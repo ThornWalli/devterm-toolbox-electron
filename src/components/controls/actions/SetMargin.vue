@@ -1,5 +1,5 @@
 <template>
-  <controls-action-item class="action-set-margin" :title="title" v-bind="$attrs" v-on="Object.assign({}, $listeners, {input:[]})">
+  <action-dialog class="action-set-margin" v-bind="$attrs" v-on="Object.assign({}, $listeners, {input:[]})">
     <template #head>
       <slot name="head" />
     </template>
@@ -11,17 +11,20 @@
         type="number"
         :value="value"
         :label="label"
-        @input="$emit('input', $event)"
+        @input="$emit('input', $event || 0)"
       />
     </template>
-  </controls-action-item>
+  </action-dialog>
 </template>
 
 <script>
-import ControlsActionItem from '@/components/controls/ActionItem';
+import ActionDialog from '@/components/controls/ActionDialog';
+import MixinDialog from '@/mixins/Dialog';
+
 import InputTextField from '@/components/inputs/TextField';
 export default {
-  components: { ControlsActionItem, InputTextField },
+  components: { ActionDialog, InputTextField },
+  mixins: [MixinDialog],
   inheritAttrs: false,
 
   props: {
@@ -34,11 +37,6 @@ export default {
     return {
       label: 'Set Margin'
     };
-  },
-  computed: {
-    title () {
-      return `Margin: ${this.value}`;
-    }
   }
 };
 </script>

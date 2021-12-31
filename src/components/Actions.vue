@@ -1,5 +1,6 @@
+
 <template>
-  <div class="actions" :class="{'action-active' : activeActionItem,'drag' : isDrag}">
+  <div class="actions" :class="{'action-active' : selectedAction,'drag' : isDrag}">
     <div ref="list" class="list">
       <div
         @dragover="allowDrop"
@@ -12,19 +13,19 @@
           <li
             v-for="(action, index) in model"
             :id="`anchor-action-item-${action.id}`"
-            :key="`${action.id}`"
+            :key="action.id"
           >
-            <component
-              :is="getComponentByType(action.type)"
+            <action-item
+              v-if="ACTION_DEFINITIONS[action.type]"
               :id="action.id"
-              :focus="dragTarget && dragTarget.id === action.id && action.id !== dragId"
-              :value="action.value"
+              :property="ACTION_DEFINITIONS[action.type].property"
+              :display="ACTION_DEFINITIONS[action.type].display(action.value)"
+              :can-select="!!ACTION_DEFINITIONS[action.type].dialog"
               :item-states="itemStates"
               :data-id="action.id"
-              :colors="colors"
               :draggable="!itemStates[action.id]"
-              @input="updateAction(index, $event)"
-              @active="$event ? (activeActionItem = action.id) : activeActionItem = null"
+              :focus="dragTargetId === action.id && action.id !== dragId"
+              @select="onSelectAction(action.id)"
               @dragstart="onDragStart"
             >
               <template #head>
@@ -41,25 +42,39 @@
                   </input-icon-button>
                 </div>
               </template>
-            </component>
+            </action-item>
+            <span v-else>
+              Action {{ action.type }} not defined…
+            </span>
           </li>
         </transition-group>
       </div>
     </div>
     <div class="add-action">
-      <input-drop-down v-model="selectedAction" :options="actionTypeOptions" :label="null" />
+      <input-drop-down v-model="createAction" :options="actionTypeOptions" :label="null" />
     </div>
+    <component
+      :is="dialogComponent"
+      v-if="selectedAction"
+      ref="dialog"
+      :colors="colors"
+      :value="selectedAction.value"
+      @input="updateAction(selectedAction, $event)"
+      @ready="onReadyDialog"
+      @close="onCloseDialog"
+    />
   </div>
 </template>
 
-<script>
+<script>/* eslint-disable vue/no-unused-components */
 import { fromEvent } from 'rxjs';
-import { getComponentByType, getActionTypeOptions, createAction } from '@/utils/action';
+import { getComponentByType, getActionTypeOptions, createAction, ACTION_DEFINITIONS } from '@/utils/action';
 import InputIconButton from '@/components/inputs/IconButton';
 import InputDropDown from '@/components/inputs/DropDown';
 import SvgIconArrowUp from '@/assets/svg/icons/arrow-up.svg?vue-template';
 import SvgIconArrowDown from '@/assets/svg/icons/arrow-down.svg?vue-template';
 import SvgIconTrash from '@/assets/svg/icons/trash.svg?vue-template';
+import ActionItem from '@/components/controls/ActionItem';
 
 export default {
   components: {
@@ -67,7 +82,8 @@ export default {
     SvgIconArrowDown,
     SvgIconTrash,
     InputIconButton,
-    InputDropDown
+    InputDropDown,
+    ActionItem
   },
   props: {
     value: {
@@ -85,16 +101,26 @@ export default {
   },
   data () {
     return {
+      ACTION_DEFINITIONS,
       getComponentByType,
-      activeActionItem: null,
-      selectedAction: null,
+      selectedActionId: null,
+      //   selectedAction: null,
+      createAction: null,
       actionTypeOptions: getActionTypeOptions(),
       itemStates: {},
       isDrag: false,
       dragId: null,
-      dragTarget: null,
+      dragTargetId: null,
       model: [...this.value]
     };
+  },
+  computed: {
+    selectedAction () {
+      return this.model.find(action => action.id === this.selectedActionId);
+    },
+    dialogComponent () {
+      return this.selectedAction && ACTION_DEFINITIONS[this.selectedAction.type].dialog;
+    }
   },
   watch: {
 
@@ -104,28 +130,33 @@ export default {
       },
       immediate: true
     },
-    activeActionItem (id, lastId) {
-      console.log(id, lastId);
+    selectedAction (action, lastAction) {
+      console.log(action, lastAction);
       const itemStates = { ...this.itemStates };
-      lastId !== undefined && (itemStates[lastId] = false);
-      itemStates[id] = true;
+      lastAction && (itemStates[lastAction.id] = false);
+      action && (itemStates[action.id] = true);
       this.itemStates = itemStates;
-      if (id) {
-        const anchorEl = document.querySelector(`#anchor-action-${id}`);
-        anchorEl && anchorEl.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      this.$emit('selectAction', action);
+      if (action) {
+        const anchorEl = document.querySelector(`#anchor-action-${action.id}`);
+        this.$nextTick(() => {
+          global.requestAnimationFrame(() => {
+            anchorEl && anchorEl.scrollIntoView({ block: 'center', behavior: 'smooth' });
+          });
+        });
       }
     },
 
-    selectedAction (selectedAction) {
+    createAction (selectedAction) {
       if (selectedAction) {
         const action = createAction(selectedAction);
         this.updateModel([].concat(this.model, action));
         this.$nextTick(() => {
-          this.selectedAction = null;
+          this.selectedActionId = null;
           const anchorEl = this.$refs.list.querySelector(`#anchor-action-item-${action.id}`);
           anchorEl && anchorEl.scrollIntoView({ block: 'center' });
           global.setTimeout(() => {
-            this.activeActionItem = action.id;
+            this.selectedActionId = action.id;
           }, 600);
         });
       }
@@ -133,12 +164,10 @@ export default {
   },
   mounted () {
     this.subscriptions = [fromEvent(global, 'dragenter').subscribe((e) => {
+      console.log(e);
       if (e.target.closest('li [data-id]')) {
         const el = e.target.closest('li [data-id]');
-        this.dragTarget = {
-          id: el.dataset.id,
-          before: el.classList.contains('before')
-        };
+        this.dragTargetId = el.dataset.id;
       }
     })];
   },
@@ -146,15 +175,35 @@ export default {
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
   },
   methods: {
+    onReadyDialog () {
+      this.$nextTick(() => {
+        this.$refs.dialog.show();
+      });
+    },
+    onCloseDialog () {
+      this.selectedActionId = null;
+    },
+    onSelectAction (id) {
+      if (id) {
+        this.selectedActionId = id;
+      } else {
+        this.selectedActionId = null;
+      }
+    },
     updateModel (model) {
-      this.model = model;
+      this.model = [...model];
       this.$emit('input', [...model]);
     },
 
-    updateAction (index, value) {
+    updateAction (action, value) {
       const actions = this.model;
+      const index = actions.indexOf(action);
       console.log('updateAction', index, value);
-      actions[index] = { ...actions[index], value };
+      actions[index] = {
+        ...actions[index],
+        value
+        // timestamp: Date.now()
+      };
       this.updateModel(actions);
     },
 
@@ -184,9 +233,8 @@ export default {
       }, 100);
     },
     onDrop (e) {
-      const { id } = this.dragTarget;
       let actions = [].concat(this.model);
-      const index = actions.indexOf(actions.find(action => action.id === id));
+      const index = actions.indexOf(actions.find(action => action.id === this.dragTargetId));
       const dragIndex = actions.indexOf(actions.find(action => action.id === this.dragId));
       const action = actions.splice(dragIndex, 1);
       if (dragIndex > index) {
@@ -195,11 +243,10 @@ export default {
         actions = [...actions.slice(0, index), ...action, ...actions.slice(index)];
       }
 
-      this.model = actions;
       this.dragId = null;
-      this.dragTarget = null;
+      this.dragTargetId = null;
       this.isDrag = false;
-      this.render();
+      this.updateModel(actions);
     },
     allowDrop (e) {
       e.preventDefault();
@@ -215,9 +262,10 @@ export default {
   flex-direction: column;
   height: 100%;
   padding: 0 calc(8 / 16 * 1em);
+  user-select: none;
 
   & .list {
-    height: calc(100% - (32px + 32px));
+    height: calc(100% - (24px + 24px));
     overflow: auto;
   }
 
@@ -240,12 +288,10 @@ export default {
 
   & li {
     display: block;
-    padding: 4px 0;
 
-    & + li {
-      /* margin-top: 10px; */
+    /* & + li {
       padding-top: 4px;
-    }
+    } */
   }
 }
 
@@ -255,7 +301,7 @@ export default {
   justify-content: flex-end;
 
   & > * {
-    margin: 0 calc(4 / 16 * 1em);
+    padding: 0 calc(4 / 16 * 1em);
   }
 
   & .index {

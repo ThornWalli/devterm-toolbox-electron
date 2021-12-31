@@ -10,11 +10,18 @@ export const toDataURL = (targetCanvas) => {
   return canvas.toDataURL();
 };
 
-export const resizeCanvas = (canvas, width) => {
-  if (canvas.width <= width) {
-    return canvas;
+export const resizeCanvas = (canvas, width, height) => {
+  if (width) {
+    if (canvas.width <= width) {
+      return canvas;
+    }
+    height = width * (canvas.height / canvas.width);
+  } else {
+    if (canvas.height <= height) {
+      return canvas;
+    }
+    width = height * (canvas.width / canvas.height);
   }
-  const height = width * (canvas.height / canvas.width);
   const resizedCanvas = new OffscreenCanvas(width, height);
   resizedCanvas.getContext('2d').drawImage(canvas, 0, 0, width, height);
   return resizedCanvas;

@@ -1,5 +1,5 @@
 <template>
-  <controls-action-item class="action-text" :title="title" v-bind="$attrs" v-on="Object.assign({}, $listeners, {input:[]})">
+  <action-dialog class="action-dialog-text" v-bind="$attrs" v-on="Object.assign({}, $listeners, {input:[]})">
     <template #head>
       <slot name="head" />
     </template>
@@ -16,14 +16,17 @@
         <span>Rows: <span>{{ value.split('\n').length }}</span></span>
       </div>
     </template>
-  </controls-action-item>
+  </action-dialog>
 </template>
 
 <script>
-import ControlsActionItem from '@/components/controls/ActionItem';
+import ActionDialog from '@/components/controls/ActionDialog';
 import InputTextBox from '@/components/inputs/TextBox';
+import MixinDialog from '@/mixins/Dialog';
+
 export default {
-  components: { ControlsActionItem, InputTextBox },
+  components: { ActionDialog, InputTextBox },
+  mixins: [MixinDialog],
   inheritAttrs: false,
   props: {
     value: {
@@ -35,11 +38,6 @@ export default {
     return {
       label: 'Select align'
     };
-  },
-  computed: {
-    title () {
-      return `Text: ${this.value.slice(0, 16)}…`;
-    }
   },
   methods: {
     onInput (e) {

@@ -5,16 +5,17 @@ import { ALIGN, DEFAULT_DENSITY, FONT, getDefaultConfig, MAX_PIXELS_FONT } from 
 import ActionSetAlign from '@/components/controls/actions/SetAlign';
 import ActionSetFont from '@/components/controls/actions/SetFont';
 import ActionSetMargin from '@/components/controls/actions/SetMargin';
-import ActionCutLine from '@/components/controls/actions/CutLine';
 import ActionSetLineSpace from '@/components/controls/actions/SetLineSpace';
 import ActionSetWordGap from '@/components/controls/actions/SetWordGap';
 import ActionSetDensity from '@/components/controls/actions/SetDensity';
-import ActionReset from '@/components/controls/actions/Reset';
 import ActionText from '@/components/controls/actions/Text';
 import ActionImage from '@/components/controls/actions/Image';
+import ActionQrCode from '@/components/controls/actions/QrCode';
 import ActionFeedPitch from '@/components/controls/actions/FeedPitch';
 import PreviewTextCanvas from '@/components/preview/TextCanvas';
 import PreviewImageCanvas from '@/components/preview/ImageCanvas';
+import PreviewQrCodeCanvas from '@/components/preview/QrCodeCanvas';
+import PreviewBarcodeCanvas from '@/components/preview/BarcodeCanvas';
 import PreviewFeedPitch from '@/components/preview/FeedPitch';
 import { DropDownOptionDescription } from '@/components/base/DropDown';
 
@@ -27,10 +28,14 @@ export const getActionTypeOptions = () => {
     new DropDownOptionDescription({ title: 'Set Density', value: 'setDensity' }),
     new DropDownOptionDescription({ title: 'Set LineSpace', value: 'setLineSpace' }),
     new DropDownOptionDescription({ title: 'Set WordGap', value: 'setWordGap' }),
+    new DropDownOptionDescription({ title: 'Reset', value: 'reset' }),
+    new DropDownOptionDescription({ title: 'Image', value: 'image' }),
+    new DropDownOptionDescription({ title: 'QRCode', value: 'qrCode' }),
+    new DropDownOptionDescription({ title: 'Barcode', value: 'barcode' }),
     new DropDownOptionDescription({ title: 'Text', value: 'text' }),
     new DropDownOptionDescription({ title: 'Cutline', value: 'cutLine' })
   ];
-};
+}; console.log('DEFAULT_DENSITY', DEFAULT_DENSITY);
 
 export const getComponentByType = (type) => {
   return {
@@ -40,8 +45,7 @@ export const getComponentByType = (type) => {
     setDensity: ActionSetDensity,
     text: ActionText,
     image: ActionImage,
-    reset: ActionReset,
-    cutLine: ActionCutLine,
+    qrCode: ActionQrCode,
     setLineSpace: ActionSetLineSpace,
     setWordGap: ActionSetWordGap,
     feedPitch: ActionFeedPitch
@@ -54,6 +58,7 @@ export class ActionDescription {
     this.id = uuidv4();
     this.type = type;
     this.value = value;
+    // this.timestamp = timestamp || Date.now();
   }
 
   toJSON () {
@@ -65,9 +70,53 @@ export class ActionDescription {
   }
 }
 
+export const getDefaultQRCodeOptions = () => {
+  return {
+    text: 'Sample',
+    options: {
+      errorCorrectionLevel: 'M',
+      margin: 0,
+      scale: 4,
+      small: false
+    },
+    rotate: false,
+    flipX: false,
+    flipY: false,
+    width: null
+  };
+};
+
+export const getDefaultBarcodeValue = () => {
+  return {
+    text: 'Sample',
+    options: {
+      format: '',
+      height: 100,
+      font: 'monospace',
+      textAlign: 'center',
+      textPosition: 'bottom',
+      textMargin: 2,
+      fontSize: 20,
+      margin: 10,
+      displayValue: true,
+      flat: false
+    },
+    rotate: false,
+    flipX: false,
+    flipY: false,
+    width: null
+  };
+};
+
 export const createAction = (type) => {
   let value;
   switch (type) {
+    case 'setLineSpace':
+      value = 0;
+      break;
+    case 'setWordGap':
+      value = 0;
+      break;
     case 'setMargin':
       value = 0;
       break;
@@ -79,6 +128,12 @@ export const createAction = (type) => {
       break;
     case 'text':
       value = 'Text';
+      break;
+    case 'qrCode':
+      value = getDefaultQRCodeOptions();
+      break;
+    case 'barcode':
+      value = getDefaultBarcodeValue();
       break;
     default:
       break;
@@ -126,30 +181,36 @@ export const executeAction = (action, options, colors) => {
             } else {
               return '-';
             }
-          }).join(''),
-
-          colors
+          }).join('')
         }
       };
-    case 'image':
-      console.log({
+    case 'barcode':
+      return {
         id: action.id,
-        component: PreviewImageCanvas,
+        component: PreviewBarcodeCanvas,
         options: { ...options },
-        props: { ...action, colors }
-      });
+        props: { ...action }
+      };
+    case 'qrCode':
+      return {
+        id: action.id,
+        component: PreviewQrCodeCanvas,
+        options: { ...options },
+        props: { ...action }
+      };
+    case 'image':
       return {
         id: action.id,
         component: PreviewImageCanvas,
         options: { ...options },
-        props: { ...action, colors }
+        props: { ...action }
       };
     case 'text':
       return {
         id: action.id,
         component: PreviewTextCanvas,
         options: { ...options },
-        props: { ...action, colors }
+        props: { ...action }
       };
 
     case 'feedPitch':
@@ -160,4 +221,100 @@ export const executeAction = (action, options, colors) => {
         props: { ...action.value }
       };
   } return null;
+};
+
+export const ACTION_DEFINITIONS = {
+  cutLine: {
+    display: () => ({
+      title: 'Cut Line'
+    })
+  },
+  barcode: {
+    display: (value) => ({
+      title: 'Barcode',
+      value: value.text
+    }),
+    dialog: () => import('@/components/controls/actions/Barcode')
+  },
+  qrCode: {
+    display: (value) => ({
+      title: 'QR Code',
+      value: value.text
+    }),
+    dialog: () => import('@/components/controls/actions/QrCode')
+  },
+  text: {
+    display: value => ({
+      title: 'Text',
+      value: `${value.slice(0, 16)}…`
+    }),
+    dialog: () => import('@/components/controls/actions/Text')
+  },
+  image: {
+    display: () => ({
+      title: 'Image'
+    }),
+    dialog: () => import('@/components/controls/actions/Image')
+  },
+  feedPitch: {
+    display: ({ type, value }) => ({
+      title: 'Feed-Pitch',
+      value: `${type} | ${value}`
+    }),
+    dialog: () => import('@/components/controls/actions/FeedPitch')
+  },
+  reset: {
+    display: value => ({
+      property: true,
+      title: 'Reset'
+    })
+  },
+  setAlign: {
+    display: value => ({
+      property: true,
+      title: 'Align',
+      value: `${Object.entries(ALIGN).find(align => align[1] === value)[0]}`
+    }),
+    dialog: () => import('@/components/controls/actions/SetAlign')
+  },
+  setFont: {
+    display: value => ({
+      property: true,
+      title: 'Font',
+      value: Object.entries(FONT).find((font) => Number(value) === font[1])[0]
+    }),
+    dialog: () => import('@/components/controls/actions/SetFont')
+  },
+  setLineSpace: {
+    display: (value) => ({
+      property: true,
+      title: 'Line-Space',
+      value
+    }),
+    dialog: () => import('@/components/controls/actions/SetLineSpace')
+  },
+  setWordGap: {
+    display: value => ({
+      property: true,
+      title: 'Word-Gap',
+      value
+    }),
+    dialog: () => import('@/components/controls/actions/SetWordGap')
+  },
+  setMargin: {
+    display: value => ({
+      property: true,
+      title: 'Margin',
+      value
+    }),
+    dialog: () => import('@/components/controls/actions/SetMargin')
+  },
+  setDensity: {
+    display: value => ({
+      property: true,
+      title: 'Density',
+      value
+    }),
+    dialog: () => import('@/components/controls/actions/SetDensity')
+  }
 };

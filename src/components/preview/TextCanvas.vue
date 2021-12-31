@@ -3,7 +3,8 @@
 </template>
 
 <script>
-import { ALIGN, FONT, MAX_DENSITY } from 'node-devterm/config';
+import { ALIGN, MAX_DENSITY } from 'node-devterm/config';
+import { FONT_MAP } from '@/utils/font';
 
 export default {
   props: {
@@ -97,7 +98,6 @@ export default {
         const dimension = [this.width, rows.length * size];
         this.$el.width = dimension[0];
         this.$el.height = dimension[1] * lineHeight + margin[0] + margin[2];
-        // ctx.fillStyle = this.getColor(1 - Math.pow(1 - (this.options.density / MAX_DENSITY), 3));
 
         ctx.fillStyle = this.getColor(this.options.density / MAX_DENSITY);
 
@@ -129,14 +129,6 @@ function prepareText (ctx, text, x, y, lineHeight, fitWidth, result = []) {
   result.push(text);
   return result;
 }
-
-const FONT_MAP = {
-  [FONT.SIZE_5_7]: { fontFamily: '5x7-ISO8859-1', fontSize: 7 },
-  [FONT.SIZE_6_12]: { fontFamily: '6x12-ISO8859-1', fontSize: 12 },
-  [FONT.SIZE_7_14]: { fontFamily: '7x14-ISO8859-1', fontSize: 14 },
-  [FONT.SIZE_8_16_THIN_1]: { fontFamily: 'Px437_CompaqThin_8x16', fontSize: 16 },
-  [FONT.SIZE_8_16_THIN_2]: { fontFamily: 'Px437_CompaqThin_8x16', fontSize: 16 }
-};
 
 </script>
 

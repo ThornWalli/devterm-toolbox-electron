@@ -4,81 +4,70 @@
       <app-menu-item :selected="activeView === 'printer'">
         Printer
       </app-menu-item>
-      <app-menu-spacer />
+      <app-menu-spacer><button class="header-drag" /></app-menu-spacer>
+      <app-menu-divider />
+      <app-menu-item disabled @click="onClickSave">
+        Save
+      </app-menu-item>
+      <app-menu-item disabled @click="onClickLoad">
+        Load
+      </app-menu-item>
+      <app-menu-item disabled @click="onClickOptions">
+        Options
+      </app-menu-item>
       <app-menu-item @click="onClickClose">
         Close
       </app-menu-item>
     </app-menu>
     <div class="content">
-      <div class="preview">
-        <div>
+      <div>
+        <div class="preview">
           <div>
-            <div v-if="previewItems.length < 1" class="empty-actions">
-              Add a Action!
-            </div>
-            <div v-for="(item, index) in previewItems" :id="`anchor-action-${item.id}`" :key="index">
-              <component :is="item.component" :key="JSON.stringify(item.options)" v-bind="item.props" :options="item.options" />
-            </div>
-          </div>
-        </div>
-      </div>
-      <actions :value="actions" :colors="colors" @input="actions = $event" />
-      <!-- <div class="actions" :class="{'action-active' : activeActionItem,'drag' : isDrag}">
-        <div ref="list" class="list">
-          <div
-            @dragover="allowDrop"
-            @drop="onDrop"
-          >
-            <transition-group
-              :name="!isDrag ? 'flip-list' : null"
-              tag="ul"
-            >
-              <li
-                v-for="(action, index) in actions"
-                :id="action.id"
-                :key="`${action.id}`"
-              >
+            <div :class="{'has-selected': selectedAction}">
+              <div v-if="previewItems.length < 1" class="empty-actions">
+                Add a Action!
+              </div>
+              <div v-for="(item, index) in previewItems" :id="`anchor-action-${item.id}`" :key="index" :class="{'selected' : selectedAction && selectedAction.id === item.id}">
                 <component
-                  :is="getComponentByType(action.type)"
-                  :id="action.id"
-                  :focus="dragTarget && dragTarget.id === action.id && action.id !== dragId"
-                  :value="action.value"
-                  :item-states="itemStates"
-                  :data-id="action.id"
+                  :is="item.component"
+                  :key="JSON.stringify(item.options)"
+                  v-bind="item.props"
+                  :options="item.options"
                   :colors="colors"
-                  :draggable="!itemStates[action.id]"
-                  @input="updateAction(index, $event)"
-                  @active="$event ? (activeActionItem = action.id) : activeActionItem = null"
-                  @dragstart="onDragStart"
-                >
-                  <template #head>
-                    <div class="action-controls">
-                      <span class="index">{{ index + 1 }}</span>
-                      <input-icon-button @click="onClickActionUp(index)">
-                        <svg-icon-arrow-up />
-                      </input-icon-button>
-                      <input-icon-button @click="onClickActionDown(index)">
-                        <svg-icon-arrow-down />
-                      </input-icon-button>
-                      <input-icon-button @click="onClickActionDelete(index)">
-                        <svg-icon-trash />
-                      </input-icon-button>
-                    </div>
-                  </template>
-                </component>
-              </li>
-            </transition-group>
+                />
+              </div>
+            </div>
           </div>
         </div>
-        <div class="add-action">
-          <input-drop-down v-model="selectedAction" :options="actionTypeOptions" :label="null" />
-        </div>
-      </div> -->
+        <actions
+          :value="actions"
+          :colors="colors"
+          @input="actions = $event"
+          @selectAction="selectedAction = $event"
+        />
+      </div>
+      <input-text-button color="primary" class="print-button" disabled>
+        Print
+      </input-text-button>
     </div>
     <app-menu class="footer">
+      <app-menu-item @click="onClickMinimizeWindow">
+        Minimize
+      </app-menu-item>
+      <app-menu-item @click="onClickMaximizeWindow">
+        Maximize
+      </app-menu-item>
       <app-menu-item :selected="fullscreen" @click="onClickFullscreen">
         Fullscreen
       </app-menu-item>
+      <app-menu-spacer />
+      <app-menu-text class="info-connection">
+        <span>Printer Disconnected</span>
+      </app-menu-text>
+      <app-menu-divider />
+      <app-menu-text class="info-version">
+        {{ version }}
+      </app-menu-text>
     </app-menu>
   </div>
 </template>
@@ -98,7 +87,9 @@ import InputDropDown from '@/components/inputs/DropDown';
 
 import AppMenu from '@/components/app/Menu';
 import AppMenuItem from '@/components/app/MenuItem';
+import AppMenuText from '@/components/app/MenuText';
 import AppMenuSpacer from '@/components/app/MenuSpacer';
+import AppMenuDivider from '@/components/app/MenuDivider';
 import Actions from '@/components/Actions';
 
 export default {
@@ -108,11 +99,15 @@ export default {
     InputDropDown,
     AppMenu,
     AppMenuItem,
+    AppMenuText,
     AppMenuSpacer,
+    AppMenuDivider,
     Actions
   },
 
   data () {
+    const electron = window.require('electron');
+    const remote = electron.remote; // ... console.log(remote.process.env["TZ"]);
     return {
       activeView: 'printer',
 
@@ -125,7 +120,9 @@ export default {
       previewItems: [],
 
       loading: false,
-      fullscreen: false
+      fullscreen: false,
+      selectedAction: null,
+      version: remote.process.env.VERSION
     };
   },
 
@@ -174,6 +171,17 @@ export default {
       }, 500);
     },
 
+    onClickMinimizeWindow () {
+      const electron = require('electron');
+      const window = electron.remote.getCurrentWindow();
+      window.minimize();
+    },
+    onClickMaximizeWindow () {
+      const electron = require('electron');
+      const window = electron.remote.getCurrentWindow();
+      window.maximize();
+    },
+
     onClickFullscreen () {
       const electron = require('electron');
       const window = electron.remote.getCurrentWindow();
@@ -184,7 +192,11 @@ export default {
       const electron = require('electron');
       const window = electron.remote.getCurrentWindow();
       window.close();
-    }
+    },
+
+    onClickSave () {},
+    onClickLoad () {},
+    onClickOptions () {}
 
   }
 };
@@ -201,6 +213,47 @@ export const writeHeadline = (text) => {
 
 function exampleData () {
   return [
+    {
+      type: 'barcode',
+      value: {
+        text: 'Test 2000',
+        options: {
+          format: '',
+          height: 100,
+          font: 'monospace',
+          textAlign: 'center',
+          textPosition: 'bottom',
+          textMargin: 2,
+          fontSize: 20,
+          margin: 10,
+          displayValue: true,
+          flat: false
+        },
+        rotate: false,
+        flipX: false,
+        flipY: false,
+        width: null
+      }
+    },
+    {
+      type: 'qrCode',
+      value: {
+        text: 'Test 2000',
+        options: {
+          errorCorrectionLevel: 'M',
+          margin: 0,
+          scale: 4,
+          small: false
+        },
+        rotate: false,
+        flipX: false,
+        flipY: false,
+        width: null
+      }
+    },
+    { type: 'setAlign', value: ALIGN.LEFT },
+    { type: 'text', value: 'Test Text 1' },
+    { type: 'cutLine' },
     // { type: 'setAlign', value: ALIGN.LEFT },
     // { type: 'text', value: 'Test Text 1' },
     // { type: 'setAlign', value: ALIGN.CENTER },
@@ -224,6 +277,7 @@ function exampleData () {
       }
     },
     { type: 'reset' },
+    { type: 'cutLine' },
 
     { type: 'setFont', value: FONT.SIZE_8_16_THIN_1 },
 
@@ -307,6 +361,21 @@ function exampleData () {
 </script>
 
 <style lang="postcss" scoped>
+.header-drag {
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+  background: var(--color-secondary);
+  border: none;
+  outline: none;
+  appearance: none;
+  -webkit-app-region: drag;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
 .empty-actions {
   display: flex;
   align-items: center;
@@ -314,22 +383,28 @@ function exampleData () {
   min-height: 120px;
 }
 
+.info-connection {
+  color: red;
+}
+
+.info-version {
+  font-style: italic;
+}
+
 .app {
   position: relative;
   display: flex;
   flex-direction: column;
-  width: 100vw;
-  height: calc(100vh - 48px);
 
   /* min-width: 1280px; */
 
   /* height: 480px; */
-  padding-top: 24px;
+  width: 100vw;
+  height: 100vh;
   font-family: monospace;
   color: var(--color-primary);
 
   & > .header {
-    -webkit-app-region: drag;
     border-bottom: solid var(--color-primary) calc(2 / 16 * 1em);
   }
 
@@ -345,6 +420,13 @@ function exampleData () {
   & > .content {
     position: relative;
     display: flex;
+    flex-direction: column;
+
+    & > div:first-child {
+      display: flex;
+      height: calc(100% - ((32 + 8) / 16 * 1em) * 1);
+    }
+
     height: calc(100% - (22 / 16 * 1em) * 2);
   }
 
@@ -359,13 +441,21 @@ function exampleData () {
   }
 }
 
+.print-button {
+  margin: calc(8 / 12 * 1em);
+}
+
 .preview {
   position: relative;
+  display: flex;
+  flex-direction: column;
   width: 50%;
   height: 100%;
 
   & > div {
-    height: 100%;
+    flex: 1;
+
+    /* height: 100%; */
     overflow: auto;
 
     & > div {
@@ -376,9 +466,19 @@ function exampleData () {
       border-width: 1px;
       box-shadow: 0 0 1em rgb(0 0 0 / 20%);
 
-      & > div {
-        background: black;
+      &.has-selected {
+        & > div {
+          opacity: 0.4;
+
+          &.selected {
+            opacity: 1;
+          }
+        }
       }
+
+      /* & > div {
+        background: black;
+      } */
     }
   }
 }
@@ -430,6 +530,12 @@ body {
 
 strong {
   font-weight: bold;
+}
+
+hr {
+  margin: calc(8 / 16 * 1em) 0;
+  border-color: var(--color-primary);
+  border-width: 1px 0 0;
 }
 
 .list-enter-active,

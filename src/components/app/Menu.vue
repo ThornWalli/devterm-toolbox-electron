@@ -12,7 +12,7 @@ export default {
 
 <style lang="postcss" scoped>
 .app-menu {
-  /* empty */
+  user-select: none;
 }
 
 ul {

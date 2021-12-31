@@ -1,5 +1,5 @@
 <template>
-  <controls-action-item class="action-set-line-space" :title="title" v-bind="$attrs" v-on="Object.assign({}, $listeners, {input:[]})">
+  <action-dialog class="action-set-line-space" v-bind="$attrs" v-on="Object.assign({}, $listeners, {input:[]})">
     <template #head>
       <slot name="head" />
     </template>
@@ -10,17 +10,20 @@
         type="number"
         :value="value"
         :label="label"
-        @input="$emit('input', $event)"
+        @input="$emit('input', $even || 0)"
       />
     </template>
-  </controls-action-item>
+  </action-dialog>
 </template>
 
 <script>
-import ControlsActionItem from '@/components/controls/ActionItem';
+import ActionDialog from '@/components/controls/ActionDialog';
+import MixinDialog from '@/mixins/Dialog';
+
 import InputTextField from '@/components/inputs/TextField';
 export default {
-  components: { ControlsActionItem, InputTextField },
+  components: { ActionDialog, InputTextField },
+  mixins: [MixinDialog],
   inheritAttrs: false,
   props: {
     value: {
@@ -32,11 +35,6 @@ export default {
     return {
       label: 'Set Line-space'
     };
-  },
-  computed: {
-    title () {
-      return `Line-space: ${this.value}`;
-    }
   }
 };
 </script>

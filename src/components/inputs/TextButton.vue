@@ -26,22 +26,31 @@ export default {
 
 <style lang="postcss" scoped>
 .input-text-button {
-  padding: calc(4 / 16 * 1em) calc(8 / 16 * 1em);
+  padding: calc(4 / 12 * 1em) calc(8 / 12 * 1em);
   font-family: monospace;
   font-size: calc(12 / 16 * 1em);
   color: var(--color-primary);
   cursor: pointer;
   background: transparent;
   border: solid var(--color-primary) 1px;
+  opacity: 0.8;
+  transition: background 0.8s, color 0.8s, opacity 0.8s;
+
+  &:hover {
+    opacity: 1;
+    transition: background 0.3s, color 0.3s, opacity 0.3s;
+  }
 
   &.color-primary {
     color: var(--color-secondary);
     background: var(--color-primary);
-  }
 
-  /* &.color-secondary {
-    border: solid currentColor 1px;
-  } */
+    &:active {
+      color: var(--color-primary);
+      background: var(--color-secondary);
+      transition: background 0.3s, color 0.3s;
+    }
+  }
 
   &[disabled] {
     cursor: not-allowed;

@@ -1,5 +1,5 @@
 <template>
-  <base-generic-button class="input-icon-button" v-on="$listeners">
+  <base-generic-button class="input-icon-button" :class="{[`color-${color}`]: color}" v-on="$listeners">
     <i>
       <slot><component :is="svg" v-if="svg" /></slot>
     </i>
@@ -14,6 +14,10 @@ export default {
   },
   inheritAttrs: false,
   props: {
+    color: {
+      type: String,
+      default: 'secondary' // primary, secondary
+    },
     svg: {
       type: [Object, Function],
       required: false,
@@ -27,10 +31,28 @@ export default {
 .input-icon-button {
   color: currentColor;
   cursor: pointer;
+  opacity: 0.8;
+  transition: background 0.8s, color 0.8s, opacity 0.8s;
 
   & i {
     display: block;
     width: calc(12 / 16 * 1em);
+  }
+
+  &:hover {
+    opacity: 1;
+    transition: background 0.3s, color 0.3s, opacity 0.3s;
+  }
+
+  &.color-primary {
+    color: var(--color-secondary);
+    background: var(--color-primary);
+
+    &:active {
+      color: var(--color-primary);
+      background: var(--color-secondary);
+      transition: background 0.3s, color 0.3s;
+    }
   }
 
   & >>> svg {

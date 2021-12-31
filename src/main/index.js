@@ -1,23 +1,26 @@
 import * as path from 'path';
 import { format as formatUrl } from 'url';
 import { app, BrowserWindow, Menu } from 'electron';
+import pkg from '../../package.json';
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
 // global reference to mainWindow (necessary to prevent window from being garbage collected)
 let mainWindow;
 
+process.env.VERSION = pkg.version;
+
 function createMainWindow () {
   const window = new BrowserWindow({
     webPreferences: { nodeIntegration: true, fullscreen: true },
-    frame: false,
-    title: 'test',
+    title: pkg.productName,
     titleBarStyle: 'hidden',
-    titleBarOverlay: {
-      color: '#2f3241',
-      symbolColor: '#74b1be'
-    }
+    titleBarOverlay: true,
+    width: 1280,
+    height: 480
   });
+
+  window.setWindowButtonVisibility(false);
 
   if (isDevelopment) {
     window.webContents.openDevTools();
@@ -73,7 +76,7 @@ const template = [
   // { role: 'appMenu' }
   ...(isMac
     ? [{
-        label: 'TEST',
+        label: pkg.name,
         submenu: [
           { role: 'about' },
           { type: 'separator' },
@@ -90,19 +93,48 @@ const template = [
           { role: 'quit' }
         ]
       }]
-    : []),
-  {
-    role: 'help',
+    : []), {
+    label: 'Edit',
     submenu: [
-      {
-        label: 'Learn More',
-        click: async () => {
-          const { shell } = require('electron');
-          await shell.openExternal('https://electronjs.org');
-        }
-      }
+      { role: 'undo' },
+      { role: 'redo' },
+      { type: 'separator' },
+      { role: 'cut' },
+      { role: 'copy' },
+      { role: 'paste' },
+      ...(isMac
+        ? [
+            { role: 'pasteAndMatchStyle' },
+            { role: 'delete' },
+            { role: 'selectAll' },
+            { type: 'separator' },
+            {
+              label: 'Speech',
+              submenu: [
+                { role: 'startSpeaking' },
+                { role: 'stopSpeaking' }
+              ]
+            }
+          ]
+        : [
+            { role: 'delete' },
+            { type: 'separator' },
+            { role: 'selectAll' }
+          ])
     ]
   }
+  // {
+  //   role: 'help',
+  //   submenu: [
+  //     {
+  //       label: 'Learn More',
+  //       click: async () => {
+  //         const { shell } = require('electron');
+  //         await shell.openExternal('https://electronjs.org');
+  //       }
+  //     }
+  //   ]
+  // }
 ];
 
 const menu = Menu.buildFromTemplate(template);

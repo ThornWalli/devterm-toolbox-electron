@@ -1,5 +1,5 @@
 <template>
-  <controls-action-item class="action-feed-pitch" :title="title" v-bind="$attrs" v-on="Object.assign({}, $listeners, {input:[]})">
+  <action-dialog class="action-dialog-feed-pitch" v-bind="$attrs" v-on="Object.assign({}, $listeners, {input:[]})">
     <template #head>
       <slot name="head" />
     </template>
@@ -10,24 +10,28 @@
         :options="options"
       />
       <input-text-field
-        v-model="model.value"
+        :value="model.value"
         step="1"
         max="100"
         min="0"
         type="number"
         label="Value"
+        @input="model.value = $event || 0"
       />
     </template>
-  </controls-action-item>
+  </action-dialog>
 </template>
 
 <script>
-import ControlsActionItem from '@/components/controls/ActionItem';
+import ActionDialog from '@/components/controls/ActionDialog';
+import MixinDialog from '@/mixins/Dialog';
+
 import InputDropdown from '@/components/inputs/DropDown';
 import InputTextField from '@/components/inputs/TextField';
 import { DropDownOptionDescription } from '@/components/base/DropDown';
 export default {
-  components: { ControlsActionItem, InputDropdown, InputTextField },
+  components: { ActionDialog, InputDropdown, InputTextField },
+  mixins: [MixinDialog],
   inheritAttrs: false,
   props: {
     value: {
@@ -51,12 +55,6 @@ export default {
 
     };
   },
-  computed: {
-    title () {
-      const { value } = this.value;
-      return `Feed-Pitch: ${value}`;
-    }
-  },
   watch: {
     model: {
       handler () {
@@ -69,7 +67,7 @@ export default {
 </script>
 
 <style lang="postcss" scoped>
-.action-set-align {
+.action-dialog-feed-pitch {
   /* empty */
 }
 </style>

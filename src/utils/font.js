@@ -1,3 +1,4 @@
+import { FONT } from 'node-devterm/config';
 
 export const loadFonts = () => {
   const fonts = [
@@ -14,4 +15,12 @@ export const loadFonts = () => {
     document.fonts.add(fontFace);
     return fontFace;
   }));
+};
+
+export const FONT_MAP = {
+  [FONT.SIZE_5_7]: { fontFamily: '5x7-ISO8859-1', fontSize: 7 },
+  [FONT.SIZE_6_12]: { fontFamily: '6x12-ISO8859-1', fontSize: 12 },
+  [FONT.SIZE_7_14]: { fontFamily: '7x14-ISO8859-1', fontSize: 14 },
+  [FONT.SIZE_8_16_THIN_1]: { fontFamily: 'Px437_CompaqThin_8x16', fontSize: 16 },
+  [FONT.SIZE_8_16_THIN_2]: { fontFamily: 'Px437_CompaqThin_8x16', fontSize: 16 }
 };

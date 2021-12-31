@@ -1,5 +1,5 @@
 <template>
-  <base-input-label top-label class="input-text-box" :text="label">
+  <base-input-label class="input-text-box" :text="label" :top-label="topLabel">
     <textarea v-bind="$attrs" :value="value" @input="onInput" />
   </base-input-label>
 </template>
@@ -16,14 +16,24 @@ export default {
       type: String,
       default: 'TextBox'
     },
+    topLabel: {
+      type: Boolean,
+      default: true
+    },
     value: {
       type: String,
       default: ''
     }
   },
+  data () {
+    return { inputTimeout: null };
+  },
   methods: {
     onInput (e) {
-      this.$emit('input', e.target.value);
+      global.clearTimeout(this.inputTimeout);
+      this.inputTimeout = global.setTimeout(() => {
+        this.$emit('input', e.target.value);
+      }, 300);
     }
   }
 

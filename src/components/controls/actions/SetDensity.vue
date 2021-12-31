@@ -1,20 +1,23 @@
 <template>
-  <controls-action-item class="action-set-density" :title="title" v-bind="$attrs" v-on="Object.assign({}, $listeners, {input:[]})">
+  <action-dialog class="action-set-density" v-bind="$attrs" v-on="Object.assign({}, $listeners, {input:[]})">
     <template #head>
       <slot name="head" />
     </template>
     <template #default>
       <input-dropdown :label="label" :options="options" :value="value" @input="$emit('input', $event)" />
     </template>
-  </controls-action-item>
+  </action-dialog>
 </template>
 
 <script>
-import ControlsActionItem from '@/components/controls/ActionItem';
+import ActionDialog from '@/components/controls/ActionDialog';
+import MixinDialog from '@/mixins/Dialog';
+
 import InputDropdown from '@/components/inputs/DropDown';
 import { DropDownOptionDescription } from '@/components/base/DropDown';
 export default {
-  components: { ControlsActionItem, InputDropdown },
+  components: { ActionDialog, InputDropdown },
+  mixins: [MixinDialog],
   inheritAttrs: false,
   props: {
     value: {
@@ -27,11 +30,6 @@ export default {
       label: 'Set Density',
       options: Array(15).fill('').map((v, index) => new DropDownOptionDescription(String(index + 1)))
     };
-  },
-  computed: {
-    title () {
-      return `Density: ${this.value}`;
-    }
   }
 };
 </script>

@@ -1,21 +1,26 @@
 <template>
-  <controls-action-item class="action-set-align" :title="title" v-bind="$attrs" v-on="Object.assign({}, $listeners, {input:[]})">
+  <action-dialog class="action-dialog-set-align" v-bind="$attrs" v-on="Object.assign({}, $listeners, {input:[]})">
     <template #head>
       <slot name="head" />
     </template>
     <template #default>
-      <input-dropdown :label="label" :options="options" @input="$emit('input', $event)" />
+      <input-dropdown :label="label" :value="value" :options="options" @input="$emit('input', Number($event))" />
     </template>
-  </controls-action-item>
+  </action-dialog>
 </template>
 
 <script>
 import { ALIGN } from 'node-devterm/config';
-import ControlsActionItem from '@/components/controls/ActionItem';
+
+import ActionDialog from '@/components/controls/ActionDialog';
+import MixinDialog from '@/mixins/Dialog';
+
 import InputDropdown from '@/components/inputs/DropDown';
 import { DropDownOptionDescription } from '@/components/base/DropDown';
+
 export default {
-  components: { ControlsActionItem, InputDropdown },
+  components: { ActionDialog, InputDropdown },
+  mixins: [MixinDialog],
   inheritAttrs: false,
   props: {
     value: {
@@ -33,17 +38,12 @@ export default {
       ].map(([title, value]) => new DropDownOptionDescription({ title, value }))
 
     };
-  },
-  computed: {
-    title () {
-      return `Align: ${Object.entries(ALIGN).find(([title, value]) => Number(this.value) === value)[0]}`;
-    }
   }
 };
 </script>
 
 <style lang="postcss" scoped>
-.action-set-align {
+.action-dialog-set-align {
   /* empty */
 }
 </style>

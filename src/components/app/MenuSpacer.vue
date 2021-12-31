@@ -1,5 +1,7 @@
 <template>
-  <li class="app-menu-spacer" />
+  <li class="app-menu-spacer">
+    <slot />
+  </li>
 </template>
 
 <script>

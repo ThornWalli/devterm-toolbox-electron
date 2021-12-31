@@ -1,20 +1,12 @@
 <template>
-  <div class="controls-action-item" :class="{'focus':focus || active, 'can-open': $slots.default }" focusable v-on="$listeners">
+  <div class="controls-action-item" :class="{'focus':focus || selected, property,'can-select': canSelect }" focusable v-on="$listeners">
     <div class="head">
       <base-generic-button class="title" @click="onClick">
-        <span>{{ title }}</span>
+        <span>{{ display.title }}{{ display.value?':':'' }}</span>
+        <span v-if="display.value">{{ display.value }}</span>
       </base-generic-button>
       <div v-if="$slots.head">
         <slot name="head" />
-      </div>
-    </div>
-    <div v-if="$slots.default && active" class="content">
-      <span @click="$emit('active', false)" />
-      <div>
-        <slot />
-        <div class="buttons">
-          <input-text-button color="primary" text="Close" @click="$emit('active', false)" />
-        </div>
       </div>
     </div>
   </div>
@@ -22,9 +14,10 @@
 
 <script>
 import BaseGenericButton from '@/components/base/GenericButton';
-import InputTextButton from '@/components/inputs/TextButton';
 export default {
-  components: { BaseGenericButton, InputTextButton },
+  components: {
+    BaseGenericButton
+  },
 
   props: {
     itemStates: {
@@ -32,6 +25,10 @@ export default {
       default () {
         return { id: false };
       }
+    },
+    canSelect: {
+      type: Boolean,
+      default: false
     },
     id: {
       type: String,
@@ -41,21 +38,30 @@ export default {
       type: Boolean,
       default: false
     },
-    title: {
-      type: String,
-      default: 'Action Item'
+    property: {
+      type: Boolean,
+      default: false
+    },
+    display: {
+      type: Object,
+      default () {
+        return {
+          title: 'Action Item',
+          value: 'Action Item Value'
+        };
+      }
     }
   },
   computed: {
-    active () {
+    selected () {
       return this.itemStates[this.id];
     }
   },
   methods: {
 
     onClick () {
-      if (this.$slots.default) {
-        this.$emit('active', true);
+      if (this.canSelect) {
+        this.$emit('select', this.id);
       }
     }
   }
@@ -80,20 +86,42 @@ export default {
     & .title {
       display: block;
       flex: 1;
-      padding: 0 calc(4 / 12 * 1em);
+      padding: calc(8 / 12 * 1em) calc(4 / 12 * 1em);
       font-size: calc(12 / 16 * 1em);
       text-align: left;
       opacity: 0.6;
-      transition: opacity 0.2s;
+      transition: opacity 0.2s, background 1s ease-out, color 0.3s ease-in;
 
       &:hover,
       &:focus {
         opacity: 1;
+        transition: opacity 0.2s, background 0.3s ease-in, color 0.3s ease-out;
+      }
+
+      & > span {
+        &:nth-child(2) {
+          font-style: italic;
+          opacity: 0.6;
+        }
       }
     }
   }
 
-  &.can-open {
+  &.property {
+    & > .head {
+      & .title {
+        &::before {
+          margin-right: calc(4 / 12 * 1em);
+          content: "»";
+        }
+
+        font-style: italic;
+        opacity: 0.4;
+      }
+    }
+  }
+
+  &.can-select {
     & > .head {
       & .title {
         cursor: pointer;
@@ -102,6 +130,7 @@ export default {
         &:focus {
           color: var(--color-secondary);
           background: var(--color-primary);
+          opacity: 1;
         }
       }
     }
@@ -145,15 +174,6 @@ export default {
       margin-top: calc(8 / 16 * 1em);
       background: black;
       border: solid var(--color-primary) 1px;
-    }
-  }
-
-  & .buttons {
-    margin: calc(-8 / 16 * 1em);
-    margin-top: calc(8 / 16 * 1em);
-
-    & > * {
-      width: 100%;
     }
   }
 }

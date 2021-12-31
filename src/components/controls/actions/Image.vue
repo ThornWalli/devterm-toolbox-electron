@@ -1,5 +1,5 @@
 <template>
-  <controls-action-item class="action-image" :title="title" v-bind="$attrs" v-on="Object.assign({}, $listeners, {input:[]})">
+  <action-dialog class="action-dialog-image" v-bind="$attrs" v-on="Object.assign({}, $listeners, {input:[]})">
     <template #head>
       <slot name="head" />
     </template>
@@ -24,19 +24,23 @@
         placeholder="Size from Image (max. 384px)"
       />
     </template>
-  </controls-action-item>
+  </action-dialog>
 </template>
 
 <script>
 import { prepareCanvasForPrint } from 'node-devterm/utils/canvas';
 import { MAX_IMAGE_WIDTH } from '@/config';
 import { getCanvasFromUrl, preparePreview, resizeCanvas, toDataURL } from '@/utils/canvas';
-import ControlsActionItem from '@/components/controls/ActionItem';
+
+import ActionDialog from '@/components/controls/ActionDialog';
+import MixinDialog from '@/mixins/Dialog';
+
 import InputCheckBox from '@/components/inputs/CheckBox';
 import InputTextField from '@/components/inputs/TextField';
 import InputFileSelect from '@/components/inputs/FileSelect';
 export default {
-  components: { ControlsActionItem, InputCheckBox, InputTextField, InputFileSelect },
+  components: { ActionDialog, InputCheckBox, InputTextField, InputFileSelect },
+  mixins: [MixinDialog],
   inheritAttrs: false,
   props: {
     colors: {
@@ -57,15 +61,9 @@ export default {
   },
   data () {
     return {
-      label: 'Select align',
       previewDataUrl: null,
       model: { ...this.value }
     };
-  },
-  computed: {
-    title () {
-      return 'Image';
-    }
   },
   watch: {
     model: {
@@ -106,6 +104,7 @@ export default {
       let canvas = await getCanvasFromUrl(this.model.file);
       canvas = prepareCanvasForPrint(canvas, this.model, this.colors);
       canvas = preparePreview(canvas, this.colors);
+      canvas = resizeCanvas(canvas, null, 100);
       this.previewDataUrl = toDataURL(canvas);
     },
 
@@ -122,7 +121,7 @@ export default {
 </script>
 
 <style lang="postcss" scoped>
-.action-image {
+.action-dialog-image {
   box-sizing: border-box;
   display: flex;
   flex-direction: column;

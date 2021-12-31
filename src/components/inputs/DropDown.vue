@@ -1,5 +1,5 @@
 <template>
-  <base-input-label class="input-drop-down" :text="label">
+  <base-input-label class="input-drop-down" :text="label" :top-label="topLabel">
     <base-drop-down v-bind="$attrs" v-on="$listeners" />
   </base-input-label>
 </template>
@@ -17,6 +17,10 @@ export default {
     label: {
       type: String,
       default: 'Dropdown Label'
+    },
+    topLabel: {
+      type: Boolean,
+      default: false
     }
   }
 };
@@ -26,7 +30,7 @@ export default {
 .input-drop-down {
   & >>> select {
     width: 100%;
-    padding: 5px;
+    padding: calc(4 / 12 * 1em) calc(5 / 12 * 1em);
     font-family: monospace;
     font-size: calc(12 / 16 * 1em);
     color: currentColor;
