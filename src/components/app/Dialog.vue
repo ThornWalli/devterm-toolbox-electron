@@ -10,8 +10,8 @@
 </template>
 
 <script>
-// import { filter } from 'rxjs/operators';
-// import { keyUpObserver } from '@/utils/dom';
+import { filter } from 'rxjs/operators';
+import { keyUpObserver } from '@/utils/dom';
 export default {
   props: {
     embed: {
@@ -32,11 +32,11 @@ export default {
   watch: {
     open (value) {
       if (value) {
-        // this.subscriptions = [keyUpObserver.pipe(filter(({ key }) => key === 'Escape')).subscribe((e) => {
-        //   if (this.escapeClose) {
-        //     this.close();
-        //   }
-        // })];
+        this.subscriptions = [keyUpObserver.pipe(filter(({ key }) => key === 'Escape')).subscribe((e) => {
+          if (this.escapeClose) {
+            this.close();
+          }
+        })];
         this.$emit('open');
       } else {
         this.subscriptions.forEach(subscription => subscription.unsubscribe());

@@ -5,7 +5,6 @@
         Printer
       </app-menu-item>
       <app-menu-spacer><button class="header-drag" /></app-menu-spacer>
-      <app-menu-divider />
       <app-menu-item disabled @click="onClickSave">
         Save
       </app-menu-item>
@@ -399,8 +398,8 @@ function exampleData () {
   /* min-width: 1280px; */
 
   /* height: 480px; */
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   font-family: monospace;
   color: var(--color-primary);
 
@@ -427,7 +426,8 @@ function exampleData () {
       height: calc(100% - ((32 + 8) / 16 * 1em) * 1);
     }
 
-    height: calc(100% - (22 / 16 * 1em) * 2);
+/* TODO: Warum 1 mehr? */
+    height: calc(100% - ((22 + 1) / 16 * 1em) * 2);
   }
 
   & .preview {

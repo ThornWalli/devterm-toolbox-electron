@@ -1,5 +1,6 @@
 import * as path from 'path';
 import { format as formatUrl } from 'url';
+// eslint-disable-next-line no-unused-vars
 import { app, BrowserWindow, Menu } from 'electron';
 import pkg from '../../package.json';
 
@@ -20,7 +21,9 @@ function createMainWindow () {
     height: 480
   });
 
-  window.setWindowButtonVisibility(false);
+  if (process.platform === 'darwin') {
+    window.setWindowButtonVisibility(false);
+  }
 
   if (isDevelopment) {
     window.webContents.openDevTools();
@@ -70,72 +73,72 @@ app.on('ready', () => {
   mainWindow = createMainWindow();
 });
 
-const isMac = process.platform === 'darwin'; ;
+// const isMac = process.platform === 'darwin'; ;
 
-const template = [
-  // { role: 'appMenu' }
-  ...(isMac
-    ? [{
-        label: pkg.name,
-        submenu: [
-          { role: 'about' },
-          { type: 'separator' },
-          // { role: 'services' },
-          // { type: 'separator' },
-          // { role: 'hide' },
-          // { role: 'hideOthers' },
-          // { role: 'unhide' },
-          { role: 'reload' },
-          { role: 'forceReload' },
-          { role: 'toggleDevTools' },
-          { role: 'togglefullscreen' },
-          { type: 'separator' },
-          { role: 'quit' }
-        ]
-      }]
-    : []), {
-    label: 'Edit',
-    submenu: [
-      { role: 'undo' },
-      { role: 'redo' },
-      { type: 'separator' },
-      { role: 'cut' },
-      { role: 'copy' },
-      { role: 'paste' },
-      ...(isMac
-        ? [
-            { role: 'pasteAndMatchStyle' },
-            { role: 'delete' },
-            { role: 'selectAll' },
-            { type: 'separator' },
-            {
-              label: 'Speech',
-              submenu: [
-                { role: 'startSpeaking' },
-                { role: 'stopSpeaking' }
-              ]
-            }
-          ]
-        : [
-            { role: 'delete' },
-            { type: 'separator' },
-            { role: 'selectAll' }
-          ])
-    ]
-  }
-  // {
-  //   role: 'help',
-  //   submenu: [
-  //     {
-  //       label: 'Learn More',
-  //       click: async () => {
-  //         const { shell } = require('electron');
-  //         await shell.openExternal('https://electronjs.org');
-  //       }
-  //     }
-  //   ]
-  // }
-];
+// const template = [
+//   // { role: 'appMenu' }
+//   ...(isMac
+//     ? [{
+//         label: pkg.name,
+//         submenu: [
+//           { role: 'about' },
+//           { type: 'separator' },
+//           // { role: 'services' },
+//           // { type: 'separator' },
+//           // { role: 'hide' },
+//           // { role: 'hideOthers' },
+//           // { role: 'unhide' },
+//           { role: 'reload' },
+//           { role: 'forceReload' },
+//           { role: 'toggleDevTools' },
+//           { role: 'togglefullscreen' },
+//           { type: 'separator' },
+//           { role: 'quit' }
+//         ]
+//       }]
+//     : []), {
+//     label: 'Edit',
+//     submenu: [
+//       { role: 'undo' },
+//       { role: 'redo' },
+//       { type: 'separator' },
+//       { role: 'cut' },
+//       { role: 'copy' },
+//       { role: 'paste' },
+//       ...(isMac
+//         ? [
+//             { role: 'pasteAndMatchStyle' },
+//             { role: 'delete' },
+//             { role: 'selectAll' },
+//             { type: 'separator' },
+//             {
+//               label: 'Speech',
+//               submenu: [
+//                 { role: 'startSpeaking' },
+//                 { role: 'stopSpeaking' }
+//               ]
+//             }
+//           ]
+//         : [
+//             { role: 'delete' },
+//             { type: 'separator' },
+//             { role: 'selectAll' }
+//           ])
+//     ]
+//   }
+//   // {
+//   //   role: 'help',
+//   //   submenu: [
+//   //     {
+//   //       label: 'Learn More',
+//   //       click: async () => {
+//   //         const { shell } = require('electron');
+//   //         await shell.openExternal('https://electronjs.org');
+//   //       }
+//   //     }
+//   //   ]
+//   // }
+// ];
 
-const menu = Menu.buildFromTemplate(template);
-Menu.setApplicationMenu(menu);
+// const menu = Menu.buildFromTemplate(template);
+// Menu.setApplicationMenu(menu);
