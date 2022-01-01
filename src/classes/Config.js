@@ -16,7 +16,11 @@ export default class Config {
   }
 
   set (name, value) {
+    if (typeof name === 'string'){
     this.data[name] = value;
+  } else   if (typeof name === 'object'){ {
+
+  }
   }
 
   save () {
@@ -24,9 +28,6 @@ export default class Config {
     return ipcRenderer.invoke('config:save', this.toJSON());
   }
 
-  async load () {
-    return (this.data = await ipcRenderer.invoke('config:load'));
-  }
 }
 
 export const getDefaultConfig = () => {
