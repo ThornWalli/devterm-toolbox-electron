@@ -42,10 +42,12 @@ export default {
   } */
 
   & > * {
-    padding: 0 calc(8 / 16 * 1em);
+    display: block;
+    height: calc(22 / 12 * 1em);
+    padding: 0 calc(8 / 12 * 1em);
     font-family: monospace;
     font-size: calc(12 / 16 * 1em);
-    line-height: calc(20 / 12);
+    line-height: 1;
     cursor: pointer;
 
     &[disabled] {

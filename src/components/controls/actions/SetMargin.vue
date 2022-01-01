@@ -1,5 +1,5 @@
 <template>
-  <action-dialog class="action-set-margin" v-bind="$attrs" v-on="Object.assign({}, $listeners, {input:[]})">
+  <action-dialog title="Set Margin" class="action-set-margin" v-bind="$attrs" v-on="Object.assign({}, $listeners, {input:[]})">
     <template #head>
       <slot name="head" />
     </template>

@@ -1,5 +1,5 @@
 <template>
-  <action-dialog class="action-dialog-image" v-bind="$attrs" v-on="Object.assign({}, $listeners, {input:[]})">
+  <action-dialog title="Image" class="action-dialog-image" v-bind="$attrs" v-on="Object.assign({}, $listeners, {input:[]})">
     <template #head>
       <slot name="head" />
     </template>
@@ -38,6 +38,7 @@ import MixinDialog from '@/mixins/Dialog';
 import InputCheckBox from '@/components/inputs/CheckBox';
 import InputTextField from '@/components/inputs/TextField';
 import InputFileSelect from '@/components/inputs/FileSelect';
+import { getDefaultImageOptions } from '@/utils/action';
 export default {
   components: { ActionDialog, InputCheckBox, InputTextField, InputFileSelect },
   mixins: [MixinDialog],
@@ -55,7 +56,7 @@ export default {
     value: {
       type: Object,
       default () {
-        return { file: null, width: null, rotate: false, flipX: false, flipY: false, grayscale: false };
+        return getDefaultImageOptions();
       }
     }
   },
@@ -102,7 +103,7 @@ export default {
 
     async render () {
       let canvas = await getCanvasFromUrl(this.model.file);
-      canvas = prepareCanvasForPrint(canvas, this.model, this.colors);
+      canvas = prepareCanvasForPrint(canvas, this.model.imageOptions);
       canvas = preparePreview(canvas, this.colors);
       canvas = resizeCanvas(canvas, null, 100);
       this.previewDataUrl = toDataURL(canvas);

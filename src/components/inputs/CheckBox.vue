@@ -1,5 +1,5 @@
 <template>
-  <base-input-label class="input-text-box" :text="label">
+  <base-input-label class="input-check-box" :text="label" :delimiter="$attrs.delimiter || undefined" :top-label="$attrs['top-label']" :baseline-label="$attrs['baseline-label']">
     <input type="checkbox" v-bind="$attrs" :checked="value" @change="$emit('input', $event.target.checked)"><span />
   </base-input-label>
 </template>
@@ -31,8 +31,8 @@ export default {
 </script>
 
 <style lang="postcss" scoped>
-.input-text-box {
-  --offset: 2px;
+.input-check-box {
+  --offset: calc(2 / 16 * 1em);
 
   & span {
     position: relative;

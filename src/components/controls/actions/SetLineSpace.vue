@@ -1,5 +1,5 @@
 <template>
-  <action-dialog class="action-set-line-space" v-bind="$attrs" v-on="Object.assign({}, $listeners, {input:[]})">
+  <action-dialog title="Set Line Space" class="action-set-line-space" v-bind="$attrs" v-on="Object.assign({}, $listeners, {input:[]})">
     <template #head>
       <slot name="head" />
     </template>

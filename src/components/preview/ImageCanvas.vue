@@ -77,7 +77,7 @@ export default {
         const imageContext = imageCanvas.getContext('2d');
         imageContext.drawImage(this.img, 0, 0);
 
-        const preparedCanvas = prepareCanvasForPrint(imageCanvas, this.value);
+        const preparedCanvas = prepareCanvasForPrint(imageCanvas, this.value.imageOptions);
 
         const ctx = this.ctx;
         ctx.canvas.width = this.width;

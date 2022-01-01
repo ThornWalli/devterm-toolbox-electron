@@ -1,5 +1,5 @@
 <template>
-  <base-input-label class="input-drop-down" :text="label" :top-label="topLabel">
+  <base-input-label class="input-drop-down" :text="label" :top-label="$attrs['top-label']" :baseline-label="$attrs['baseline-label']" :delimiter="$attrs.delimiter || undefined">
     <base-drop-down v-bind="$attrs" v-on="$listeners" />
   </base-input-label>
 </template>
@@ -17,10 +17,6 @@ export default {
     label: {
       type: String,
       default: 'Dropdown Label'
-    },
-    topLabel: {
-      type: Boolean,
-      default: false
     }
   }
 };

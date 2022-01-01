@@ -1,5 +1,5 @@
 <template>
-  <action-dialog class="action-dialog-set-align" v-bind="$attrs" v-on="Object.assign({}, $listeners, {input:[]})">
+  <action-dialog title="Set Align" class="action-dialog-set-align" v-bind="$attrs" v-on="Object.assign({}, $listeners, {input:[]})">
     <template #head>
       <slot name="head" />
     </template>

@@ -71,7 +71,7 @@ export default {
     },
     render () {
       global.requestAnimationFrame(async () => {
-        const preparedCanvas = prepareCanvasForPrint(await getQRCode(this.value.text || 'empty', this.value.options || {}), this.value);
+        const preparedCanvas = prepareCanvasForPrint(await getQRCode(this.value.text || 'empty', this.value.options || {}), this.value.imageOptions);
 
         const ctx = this.ctx;
         ctx.canvas.width = this.width;

@@ -1,12 +1,12 @@
 <template>
-  <li class="app-menu-text">
+  <li class="app-menu-text" v-bind="$attrs" v-on="$listeners">
     <slot />
   </li>
 </template>
 
 <script>
 export default {
-
+  inheritAttrs: false
 };
 </script>
 <style lang="postcss" scoped>

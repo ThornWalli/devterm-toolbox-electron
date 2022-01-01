@@ -4,6 +4,12 @@
 import Vue from 'vue';
 import App from '@/components/App.vue';
 
+// plugins
+import '@/plugins/error';
+import '@/plugins/config';
+import '@/plugins/server';
+import '@/plugins/client';
+
 Vue.component('App', App);
 // eslint-disable-next-line no-new
 new Vue({

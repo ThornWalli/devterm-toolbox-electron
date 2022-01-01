@@ -1,45 +1,69 @@
-import * as path from 'path';
-import { format as formatUrl } from 'url';
+import { resolve, join } from 'path';
+import url from 'url';
+import fs from 'fs';
 // eslint-disable-next-line no-unused-vars
 import { app, BrowserWindow, Menu } from 'electron';
 import pkg from '../../package.json';
+import Server from '../classes/Server';
+import { getDefaultConfig } from '../classes/Config';
+const isDev = process.env.NODE_ENV !== 'production';
 
-const isDevelopment = process.env.NODE_ENV !== 'production';
+if (isDev) {
+  if (pkg.version) {
+    app.setVersion(pkg.version);
+  }
+  if (pkg.productName) {
+    app.setName(pkg.productName);
+  } else if (pkg.name) {
+    app.setName(pkg.name);
+  }
+  app.setPath('userData', join(app.getPath('appData'), app.getName()));
+  app.setPath('userCache', join(app.getPath('cache'), app.getName()));
+  app.setAppPath(resolve('../../'));
+}
 
-// global reference to mainWindow (necessary to prevent window from being garbage collected)
+const server = new Server();
+
+// eslint-disable-next-line no-unused-vars
+const isMac = process.platform === 'darwin';
+
 let mainWindow;
-
 process.env.VERSION = pkg.version;
 
 function createMainWindow () {
   const window = new BrowserWindow({
-    webPreferences: { nodeIntegration: true, fullscreen: true },
+    webPreferences: {
+      nodeIntegration: true,
+      fullscreen: true,
+      webSecurity: false
+    },
     title: pkg.productName,
-    titleBarStyle: 'hidden',
-    titleBarOverlay: true,
+    // titleBarStyle: 'hidden',
+    // titleBarOverlay: true,
     width: 1280,
     height: 480
   });
 
-  if (process.platform === 'darwin') {
-    window.setWindowButtonVisibility(false);
-  }
+  // if (isMac) {
+  //   window.setWindowButtonVisibility(false);
+  // }
 
-  if (isDevelopment) {
+  if (isDev) {
     window.webContents.openDevTools();
   }
 
-  if (isDevelopment) {
+  if (isDev) {
     window.loadURL(`http://localhost:${process.env.ELECTRON_WEBPACK_WDS_PORT}`);
   } else {
-    window.loadURL(formatUrl({
-      pathname: path.join(__dirname, 'index.html'),
+    window.loadURL(url.format({
+      pathname: join(__dirname, 'index.html'),
       protocol: 'file',
       slashes: true
     }));
   }
 
   window.on('closed', () => {
+    server && server.close();
     mainWindow = null;
   });
 
@@ -142,3 +166,39 @@ app.on('ready', () => {
 
 // const menu = Menu.buildFromTemplate(template);
 // Menu.setApplicationMenu(menu);
+
+const { ipcMain } = require('electron');
+
+ipcMain.handle('server:start', (event, port) => {
+  return server.start(port);
+});
+ipcMain.handle('server:stop', (event) => {
+  return server.stop();
+});
+ipcMain.handle('server:getOptions', (event) => {
+  return getServerOptions(server);
+});
+
+const userDataPath = app.getPath('userData');
+const configFile = resolve(userDataPath, 'config.json');
+
+ipcMain.handle('config:load', async (event) => {
+  try {
+    return JSON.parse(await fs.promises.readFile(configFile, 'utf-8'));
+  } catch (error) {
+    return getDefaultConfig();
+  }
+});
+
+ipcMain.handle('config:save', (event, data) => {
+  fs.promises.writeFile(configFile, JSON.stringify(data), 'utf-8');
+});
+
+const getServerOptions = (server) => {
+  return {
+    active: server.active,
+    port: server.port,
+    hosts: server.hosts,
+    activeSessions: server.sockets.size
+  };
+};

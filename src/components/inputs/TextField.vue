@@ -1,5 +1,5 @@
 <template>
-  <base-input-label class="input-text-field" :text="label" :top-label="topLabel">
+  <base-input-label class="input-text-field" :text="label" :delimiter="$attrs.delimiter || undefined" :top-label="$attrs['top-label']" :baseline-label="$attrs['baseline-label']">
     <input :type="type" v-bind="$attrs" :value="value" @input="onInput">
   </base-input-label>
 </template>

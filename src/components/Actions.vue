@@ -288,10 +288,6 @@ export default {
 
   & li {
     display: block;
-
-    /* & + li {
-      padding-top: 4px;
-    } */
   }
 }
 

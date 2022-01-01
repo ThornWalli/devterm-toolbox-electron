@@ -1,11 +1,15 @@
 <template>
-  <base-input-label class="input-text-box" :text="label" :top-label="topLabel">
+  <base-input-label class="input-text-box" :text="label" :delimiter="$attrs.delimiter || undefined" :top-label="$attrs['top-label']" :baseline-label="$attrs['baseline-label']">
     <textarea v-bind="$attrs" :value="value" @input="onInput" />
+    <!-- <span class="resizer">
+      <svg-icon-resize />
+    </span> -->
   </base-input-label>
 </template>
 
 <script>
 import BaseInputLabel from '@/components/base/InputLabel';
+
 export default {
   components: {
     BaseInputLabel
@@ -42,7 +46,7 @@ export default {
 
 <style lang="postcss" scoped>
 .input-text-box {
-  /* empty */
+  position: relative;
 }
 
 textarea {
@@ -54,11 +58,22 @@ textarea {
   font-size: calc(12 / 16 * 1em);
   line-height: calc(20 / 12);
   color: currentColor;
-  resize: none;
+  resize: vertical;
   background: transparent;
   border: none;
   outline: none;
   appearance: none;
+
+  &::-webkit-resizer {
+    display: block;
+    width: calc(8 / 12 * 1em);
+    height: calc(8 / 12 * 1em);
+    background: transparent;
+    border: solid var(--color-primary);
+    border-width: 0 calc(1 / 12 * 1em) calc(1 / 12 * 1em) 0;
+    outline: none;
+    box-shadow: none;
+  }
 
   &::placeholder {
     color: var(--color-primary-50);

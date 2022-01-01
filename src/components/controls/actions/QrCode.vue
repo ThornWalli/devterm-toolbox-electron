@@ -1,38 +1,45 @@
 <template>
-  <action-dialog class="action-dialog-qr-code" v-bind="$attrs" v-on="Object.assign({}, $listeners, {input:[]})">
+  <action-dialog title="QR Code" class="action-dialog-qr-code" v-bind="$attrs" v-on="Object.assign({}, $listeners, {input:[]})">
     <template #head>
       <slot name="head" />
     </template>
     <template #default>
-      <input-text-box v-model="model.text" label="Text" />
+      <input-text-box v-model="model.text" label="Text" baseline-label />
       <hr>
       <input-drop-down v-model="model.options.errorCorrectionLevel" :options="errorCorrectionLevelOptions" label="Correc. Lev." />
 
-      <input-text-field
-        :value="model.margin"
-        type="number"
-        label="Margin"
-        step="1"
-        min="0"
-        @input="model.options.margin = $event || 0"
-      />
-      <input-text-field
-        :value="model.scale"
-        type="number"
-        label="Scale"
-        step="1"
-        min="0"
-        @input="model.options.scale = $event || 0"
-      />
-
       <div class="cols">
-        <input-check-box v-model="model.options.small" label="Small" />
-        <input-check-box v-model="model.rotate" label="Rotate" />
-        <input-check-box v-model="model.flipX" label="Flip X" />
-        <input-check-box v-model="model.flipY" label="Flip Y" />
+        <div>
+          <input-text-field
+            :value="model.options.margin"
+            type="number"
+            label="Margin"
+            step="1"
+            min="0"
+            @input="model.options.margin = $event || 0"
+          />
+        </div>
+        <div>
+          <input-text-field
+            :value="model.options.scale"
+            type="number"
+            label="Scale"
+            step="1"
+            min="0"
+            @input="model.options.scale = $event || 0"
+          />
+        </div>
+      </div>
+
+      <hr>
+      <div class="cols">
+        <div><input-check-box v-model="model.options.small" label="Small" /></div>
+        <div><input-check-box v-model="model.imageOptions.rotate" label="Rotate" /></div>
+        <div><input-check-box v-model="model.imageOptions.flipX" label="Flip X" /></div>
+        <div><input-check-box v-model="model.imageOptions.flipY" label="Flip Y" /></div>
       </div>
       <input-text-field
-        v-model="model.width"
+        v-model="model.imageOptions.width"
         type="number"
         min="1"
         step="1"
@@ -44,10 +51,6 @@
 </template>
 
 <script>
-// import { prepareCanvasForPrint } from 'node-devterm/utils/canvas';
-// import { MAX_IMAGE_WIDTH } from '@/config';
-// import { getCanvasFromUrl, preparePreview, resizeCanvas, toDataURL } from '@/utils/canvas';
-
 import ActionDialog from '@/components/controls/ActionDialog';
 import MixinDialog from '@/mixins/Dialog';
 
@@ -118,17 +121,6 @@ export default {
 
   & .input {
     flex: 1;
-  }
-
-  & .cols {
-    display: flex;
-    flex-wrap: wrap;
-
-    & > * {
-      width: 50%;
-    }
-
-    margin: calc(8 / 16 * 1em) 0;
   }
 
   & .footer {

@@ -11,7 +11,7 @@ import { ALIGN } from 'node-devterm/config';
 import { preparePreview } from '@/utils/canvas';
 
 import PreviewTextCanvas from '@/components/preview/TextCanvas';
-import { getDefaultBarcodeValue } from '@/utils/action';
+import { getDefaultBarcodeOptions } from '@/utils/action';
 
 export default {
   components: { PreviewTextCanvas },
@@ -25,7 +25,7 @@ export default {
     value: {
       type: Object,
       default () {
-        return getDefaultBarcodeValue();
+        return getDefaultBarcodeOptions();
       }
     },
     width: {
@@ -79,14 +79,11 @@ export default {
         const ctx = this.$refs.canvas.getContext('2d');
         global.requestAnimationFrame(async () => {
           try {
-            console.log('options', {
-              ...(this.value.options || {})
-            });
             const barcodeCanvas = await getBarcode(this.value.text || 'empty', {
               ...(this.value.options || {})
             });
 
-            const preparedCanvas = prepareCanvasForPrint(barcodeCanvas, this.value);
+            const preparedCanvas = prepareCanvasForPrint(barcodeCanvas, this.value.imageOptions);
 
             ctx.canvas.width = this.width;
             ctx.canvas.height = preparedCanvas.height;

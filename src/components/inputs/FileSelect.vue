@@ -1,5 +1,5 @@
 <template>
-  <base-input-label class="input-file-select" :text="label">
+  <base-input-label class="input-file-select" :text="label" :delimiter="$attrs.delimiter || undefined">
     <input
       ref="input"
       type="file"

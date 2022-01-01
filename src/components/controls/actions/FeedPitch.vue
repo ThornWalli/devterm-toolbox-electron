@@ -1,5 +1,5 @@
 <template>
-  <action-dialog class="action-dialog-feed-pitch" v-bind="$attrs" v-on="Object.assign({}, $listeners, {input:[]})">
+  <action-dialog title="Feed Pitch" class="action-dialog-feed-pitch" v-bind="$attrs" v-on="Object.assign({}, $listeners, {input:[]})">
     <template #head>
       <slot name="head" />
     </template>

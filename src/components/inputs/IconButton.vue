@@ -32,7 +32,7 @@ export default {
   color: currentColor;
   cursor: pointer;
   opacity: 0.8;
-  transition: background 0.8s, color 0.8s, opacity 0.8s;
+  transition: background 0.3s, opacity 0.3s;
 
   & i {
     display: block;
@@ -41,7 +41,7 @@ export default {
 
   &:hover {
     opacity: 1;
-    transition: background 0.3s, color 0.3s, opacity 0.3s;
+    transition: background 0.3s, opacity 0.3s;
   }
 
   &.color-primary {
@@ -51,7 +51,7 @@ export default {
     &:active {
       color: var(--color-primary);
       background: var(--color-secondary);
-      transition: background 0.3s, color 0.3s;
+      transition: background 0.3s;
     }
   }
 

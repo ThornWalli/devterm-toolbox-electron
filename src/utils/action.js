@@ -70,6 +70,18 @@ export class ActionDescription {
   }
 }
 
+export const getDefaultImageOptions = () => {
+  return {
+    file: null,
+    imageOptions: {
+      grayscale: false,
+      rotate: false,
+      flipX: false,
+      flipY: false,
+      width: null
+    }
+  };
+};
 export const getDefaultQRCodeOptions = () => {
   return {
     text: 'Sample',
@@ -79,14 +91,16 @@ export const getDefaultQRCodeOptions = () => {
       scale: 4,
       small: false
     },
-    rotate: false,
-    flipX: false,
-    flipY: false,
-    width: null
+    imageOptions: {
+      rotate: false,
+      flipX: false,
+      flipY: false,
+      width: null
+    }
   };
 };
 
-export const getDefaultBarcodeValue = () => {
+export const getDefaultBarcodeOptions = () => {
   return {
     text: 'Sample',
     options: {
@@ -101,13 +115,20 @@ export const getDefaultBarcodeValue = () => {
       displayValue: true,
       flat: false
     },
-    rotate: false,
-    flipX: false,
-    flipY: false,
-    width: null
+    imageOptions: {
+      rotate: false,
+      flipX: false,
+      flipY: false,
+      width: null
+    }
   };
 };
 
+/**
+ * Create Action Description with default value
+ * @param String type
+ * @returns ActionDescription
+ */
 export const createAction = (type) => {
   let value;
   switch (type) {
@@ -129,11 +150,14 @@ export const createAction = (type) => {
     case 'text':
       value = 'Text';
       break;
+    case 'image':
+      value = getDefaultImageOptions();
+      break;
     case 'qrCode':
       value = getDefaultQRCodeOptions();
       break;
     case 'barcode':
-      value = getDefaultBarcodeValue();
+      value = getDefaultBarcodeOptions();
       break;
     default:
       break;
@@ -141,49 +165,68 @@ export const createAction = (type) => {
   return new ActionDescription({ type, value });
 };
 
-export const executeActions = (actions, colors) => {
+export const executeActions = (actions) => {
   const options = getDefaultConfig();
-  return actions.map(action => executeAction(action, options, colors)).filter(Boolean);
+  return actions.map(action => executeAction(action, options)).filter(Boolean);
 };
 
-export const executeAction = (action, options, colors) => {
+const getCutLine = (font) => {
+  return Array(MAX_PIXELS_FONT[font]).fill('').map((v, i) => {
+    if (i % 2 === 0) {
+      return '=';
+    } else {
+      return '-';
+    }
+  }).join('');
+};
+
+export const executeAction = (action, options) => {
   switch (action.type) {
     case 'setMargin':
       options.margin = action.value;
       break;
+
     case 'setAlign':
       options.align = action.value;
       break;
+
     case 'setLineSpace':
       options.lineSpace = action.value;
       break;
+
     case 'setWordGap':
       options.wordGap = action.value;
       break;
+
     case 'setFont':
       options.font = Number(action.value);
       break;
+
     case 'setDensity':
       options.density = Number(action.value);
       break;
+
     case 'reset':
       Object.assign(options, getDefaultConfig());
       break;
+
     case 'cutLine':
       return {
         id: action.id,
         component: PreviewTextCanvas,
-        options: { ...options, margin: 0, wordGap: 0, lineSpace: 0, density: DEFAULT_DENSITY },
+        options: {
+          ...options,
+          // reset options
+          margin: 0,
+          wordGap: 0,
+          lineSpace: 0,
+          density: DEFAULT_DENSITY
+        },
         props: {
-          value: Array(MAX_PIXELS_FONT[options.font]).fill('').map((v, i) => {
-            if (i % 2 === 0) {
-              return '=';
-            } else {
-              return '-';
-            }
-          }).join('')
+          value: getCutLine(options.font)
         }
       };
+
     case 'barcode':
       return {
         id: action.id,
@@ -191,6 +234,7 @@ export const executeAction = (action, options, colors) => {
         options: { ...options },
         props: { ...action }
       };
+
     case 'qrCode':
       return {
         id: action.id,
@@ -198,6 +242,7 @@ export const executeAction = (action, options, colors) => {
         options: { ...options },
         props: { ...action }
       };
+
     case 'image':
       return {
         id: action.id,
@@ -205,6 +250,7 @@ export const executeAction = (action, options, colors) => {
         options: { ...options },
         props: { ...action }
       };
+
     case 'text':
       return {
         id: action.id,
@@ -220,54 +266,68 @@ export const executeAction = (action, options, colors) => {
         options: { ...options },
         props: { ...action.value }
       };
-  } return null;
+  }
+  return null;
 };
 
 export const ACTION_DEFINITIONS = {
   cutLine: {
     display: () => ({
       title: 'Cut Line'
-    })
+    }),
+    printerCommand: (printer) => printer.addCutLine()
   },
   barcode: {
     display: (value) => ({
       title: 'Barcode',
       value: value.text
     }),
-    dialog: () => import('@/components/controls/actions/Barcode')
+    dialog: () => import('@/components/controls/actions/Barcode'),
+    printerCommand: (printer, value) => printer.writeBarcode(value.text, value.options, value.imageOptions)
   },
   qrCode: {
     display: (value) => ({
       title: 'QR Code',
       value: value.text
     }),
-    dialog: () => import('@/components/controls/actions/QrCode')
+    dialog: () => import('@/components/controls/actions/QrCode'),
+    printerCommand: (printer, value) => printer.writeQRCode(value.text, value.options, value.imageOptions)
   },
   text: {
     display: value => ({
       title: 'Text',
       value: `${value.slice(0, 16)}…`
     }),
-    dialog: () => import('@/components/controls/actions/Text')
+    dialog: () => import('@/components/controls/actions/Text'),
+    printerCommand: (printer, value) => printer.writeLine(value)
   },
   image: {
     display: () => ({
       title: 'Image'
     }),
-    dialog: () => import('@/components/controls/actions/Image')
+    dialog: () => import('@/components/controls/actions/Image'),
+    printerCommand: (printer, value) => printer.writeImage(value.file, value.imageOptions)
   },
   feedPitch: {
     display: ({ type, value }) => ({
       title: 'Feed-Pitch',
       value: `${type} | ${value}`
     }),
-    dialog: () => import('@/components/controls/actions/FeedPitch')
+    dialog: () => import('@/components/controls/actions/FeedPitch'),
+    printerCommand: (printer, { type, value }) => {
+      if (type === 'pixel') {
+        return printer.feedPitchByPixel(value);
+      } else {
+        return printer.feedPitchByFont(value);
+      }
+    }
   },
   reset: {
     display: value => ({
       property: true,
       title: 'Reset'
-    })
+    }),
+    printerCommand: (printer) => printer.reset()
   },
   setAlign: {
     display: value => ({
@@ -275,7 +335,8 @@ export const ACTION_DEFINITIONS = {
       title: 'Align',
       value: `${Object.entries(ALIGN).find(align => align[1] === value)[0]}`
     }),
-    dialog: () => import('@/components/controls/actions/SetAlign')
+    dialog: () => import('@/components/controls/actions/SetAlign'),
+    printerCommand: (printer, value) => printer.setAlign(value)
   },
   setFont: {
     display: value => ({
@@ -283,7 +344,8 @@ export const ACTION_DEFINITIONS = {
       title: 'Font',
       value: Object.entries(FONT).find((font) => Number(value) === font[1])[0]
     }),
-    dialog: () => import('@/components/controls/actions/SetFont')
+    dialog: () => import('@/components/controls/actions/SetFont'),
+    printerCommand: (printer, value) => printer.setFont(value)
   },
   setLineSpace: {
     display: (value) => ({
@@ -291,7 +353,8 @@ export const ACTION_DEFINITIONS = {
       title: 'Line-Space',
       value
     }),
-    dialog: () => import('@/components/controls/actions/SetLineSpace')
+    dialog: () => import('@/components/controls/actions/SetLineSpace'),
+    printerCommand: (printer, value) => printer.setLineSpace(value)
   },
   setWordGap: {
     display: value => ({
@@ -299,7 +362,8 @@ export const ACTION_DEFINITIONS = {
       title: 'Word-Gap',
       value
     }),
-    dialog: () => import('@/components/controls/actions/SetWordGap')
+    dialog: () => import('@/components/controls/actions/SetWordGap'),
+    printerCommand: (printer, value) => printer.setWordGap(value)
   },
   setMargin: {
     display: value => ({
@@ -307,7 +371,8 @@ export const ACTION_DEFINITIONS = {
       title: 'Margin',
       value
     }),
-    dialog: () => import('@/components/controls/actions/SetMargin')
+    dialog: () => import('@/components/controls/actions/SetMargin'),
+    printerCommand: (printer, value) => printer.setMargin(value)
   },
   setDensity: {
     display: value => ({
@@ -315,6 +380,7 @@ export const ACTION_DEFINITIONS = {
       title: 'Density',
       value
     }),
-    dialog: () => import('@/components/controls/actions/SetDensity')
+    dialog: () => import('@/components/controls/actions/SetDensity'),
+    printerCommand: (printer, value) => printer.setDensity(value)
   }
 };

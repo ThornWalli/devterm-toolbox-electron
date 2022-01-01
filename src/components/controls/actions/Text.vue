@@ -1,5 +1,5 @@
 <template>
-  <action-dialog class="action-dialog-text" v-bind="$attrs" v-on="Object.assign({}, $listeners, {input:[]})">
+  <action-dialog title="Text" class="action-dialog-text" v-bind="$attrs" v-on="Object.assign({}, $listeners, {input:[]})">
     <template #head>
       <slot name="head" />
     </template>
@@ -13,7 +13,7 @@
         @input="onInput"
       />
       <div class="footer">
-        <span>Rows: <span>{{ value.split('\n').length }}</span></span>
+        <span>Rows: <span>{{ value.split('\n').length }}; Count: {{ value.length }}</span></span>
       </div>
     </template>
   </action-dialog>
@@ -48,24 +48,16 @@ export default {
 </script>
 
 <style lang="postcss" scoped>
-.action-text {
+.action-dialog-text {
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-
-  & .input {
-    flex: 1;
-  }
 
   & .footer {
     padding-top: calc(8 / 16 * 1em);
     margin-top: calc(8 / 16 * 1em);
     font-size: calc(12 / 16 * 1em);
-    border-top: solid var(--color-primary-50) 1px;
-
-    & > span {
-      /* empty */
-    }
+    opacity: 0.6;
   }
 }
 
