@@ -1,10 +1,10 @@
 <template>
-  <dialog class="app-dialog" :class="{embed}">
+  <dialog v-if="open" class="app-dialog" :class="{embed}">
     <span @click="close()" />
     <div v-if="title" class="dialog-title">
       {{ title }}
     </div>
-    <div v-if="open" class="dialog-content">
+    <div class="dialog-content">
       <div>
         <slot>Dialog Content</slot>
       </div>

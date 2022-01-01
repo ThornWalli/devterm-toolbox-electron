@@ -1,9 +1,9 @@
 <template>
-  <app-view class="view-log">
+  <app-view class="view-start">
     <div>
       <h2>Welcome DevTerm User!</h2>
       <p>
-        Do you work local or remote?
+        Do you work locally or remotely?
         <br>
         <br>
         <input-check-box v-model="remember" label="Remember choice" delimiter="?" />
@@ -48,7 +48,7 @@ export default {
 </script>
 
 <style lang="postcss" scoped>
-.view-log {
+.view-start {
   display: flex;
   align-items: center;
   justify-content: center;

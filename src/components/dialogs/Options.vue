@@ -3,34 +3,38 @@
     ref="dialog"
     :escape-close="false"
     title="Options"
-    class="dialog-option"
+    class="dialog-options"
     v-bind="$attrs"
     v-on="$listeners"
+    @open="onDialogOpen"
   >
     <template #default>
-      <input-text-field v-model="host" label="Host" placeholder="Enter host…" />
+      <input-drop-down v-model="model.theme" label="Theme" :options="themeOptions" />
+      <hr>
+      <input-drop-down v-model="model.startType" label="Start type" :options="startTypeOptions" />
+      <input-text-field v-model="model.host" label="Host" placeholder="Enter host…" />
       <input-text-field
         type="Number"
         label="Port"
         min="1024"
         step="1"
-        :value="port"
-        @input="port = parseInt($event)"
+        :value="model.port"
+        @input="model.port = parseInt($event)"
       />
-      <input-check-box v-bind="remember" label="Remember choice" delimiter="?" />
     </template>
     <template #buttons>
       <input-text-button color="primary" text="Apply" @click="onClickApply" />
-      <input-text-button color="primary" text="Close" @click="close()" />
+      <input-text-button color="secondary" text="Close" @click="close()" />
     </template>
   </app-dialog>
 </template>
 
 <script>
+import { DropDownOptionDescription } from '@/components/base/DropDown';
 import AppDialog from '@/components/app/Dialog';
 import InputTextButton from '@/components/inputs/TextButton';
 import InputTextField from '@/components/inputs/TextField';
-import InputCheckBox from '@/components/inputs/CheckBox';
+import InputDropDown from '@/components/inputs/DropDown';
 import MixinDialog from '@/mixins/Dialog';
 import { getDefaultConfig } from '@/classes/Config';
 
@@ -39,27 +43,33 @@ export default {
     AppDialog,
     InputTextButton,
     InputTextField,
-    InputCheckBox
+    InputDropDown
   },
   mixins: [MixinDialog],
   inheritAttrs: false,
 
-  props: {
-    value: {
-      type: Object,
-      default: getDefaultConfig()
-    }
-  },
-
   data () {
     return {
-      model: this.value
+      model: getDefaultConfig(),
+      themeOptions: [
+        ['Amber', 'amber'],
+        ['Green', 'green']
+      ].map(([title, value]) => new DropDownOptionDescription({ title, value })),
+      startTypeOptions: [
+        ['Select start type', ''],
+        ['Local', 'local'],
+        ['Remote', 'remote']
+      ].map(([title, value]) => new DropDownOptionDescription({ title, value }))
     };
   },
 
   methods: {
+    onDialogOpen () {
+      this.model = Object.assign({}, this.$config.data);
+    },
     onClickApply () {
       this.$config.set(this.model);
+      this.$config.save();
       this.close();
     }
   }
@@ -67,7 +77,7 @@ export default {
 </script>
 
 <style lang="postcss" scoped>
-.dialog-option {
+.dialog-options {
   --dialog-width: calc(480 / 16 * 1em);
 }
 </style>

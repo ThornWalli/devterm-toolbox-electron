@@ -13,17 +13,21 @@ class ServerControl {
   }
 
   async start (port) {
-    await ipcRenderer.invoke('server:start', port);
-    await this.refresh();
+    const result = await ipcRenderer.invoke('startServer', port);
+    if (result instanceof Error) {
+      throw result;
+    } else {
+      await this.refresh();
+    }
   }
 
   async stop () {
-    await ipcRenderer.invoke('server:stop');
+    await ipcRenderer.invoke('stopServer');
     await this.refresh();
   }
 
   async refresh () {
-    serverControl.options = await ipcRenderer.invoke('server:getOptions');
+    serverControl.options = await ipcRenderer.invoke('getServerOptions');
     console.log('serverControl.options', serverControl.options);
   }
 }

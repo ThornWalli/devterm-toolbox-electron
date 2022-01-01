@@ -1,11 +1,8 @@
 
 <template>
-  <div class="app" :style="style" :class="{'loading': loading}">
+  <div class="app" :style="style" :class="{ ready}">
     <app-menu class="header">
-      <app-menu-item :selected="currentView === 'log'" disabled>
-        Log
-      </app-menu-item>
-      <app-menu-item :selected="currentView === 'info'" disabled>
+      <app-menu-item :selected="currentView === VIEWS.INFO" @click="currentView = VIEWS.INFO">
         Info
       </app-menu-item>
       <app-menu-item :selected="currentView === VIEWS.PRINTER" @click="currentView = VIEWS.PRINTER">
@@ -18,16 +15,17 @@
       <app-menu-item disabled @click="onClickLoad">
         Load
       </app-menu-item>
-      <app-menu-item disabled @click="onClickOptions">
+      <app-menu-item @click="onClickOptions">
         Options
       </app-menu-item>
       <app-menu-item @click="onClickClose">
         Close
       </app-menu-item>
     </app-menu>
-    <div class="content">
-      <view-start v-if="!$client.connected" @apply="onApplyViewStart" />
+    <div class="app-content">
+      <view-start v-if="!$client.connected && ready" @apply="onApplyViewStart" />
       <view-printer v-else-if="currentView === VIEWS.PRINTER" :colors="colors" />
+      <view-info v-else-if="currentView === VIEWS.INFO" />
     </div>
     <app-menu class="footer">
       <app-menu-item @click="onClickMinimizeWindow">
@@ -53,8 +51,14 @@
       </app-menu-text>
     </app-menu>
     <dialog-error v-for="(error,index) in $errorList.errors" v-bind="error" :key="index" init-open />
-    <dialog-remote ref="remoteDialog" />
-    <dialog-server ref="serverDialog" />
+    <dialog-remote ref="dialogRemote" />
+    <dialog-server ref="dialogServer" />
+    <dialog-options ref="dialogOptions" />
+    <transition name="fade">
+      <div class="status-layer">
+        Initialize…
+      </div>
+    </transition>
   </div>
 </template>
 <script>/* eslint-disable vue/no-unused-components */
@@ -68,20 +72,35 @@ import AppMenuDivider from '@/components/app/MenuDivider';
 import DialogError from '@/components/dialogs/Error';
 import DialogRemote from '@/components/dialogs/Remote';
 import DialogServer from '@/components/dialogs/Server';
+import DialogOptions from '@/components/dialogs/Options';
 
 import ViewPrinter from '@/components/views/Printer';
 import ViewStart from '@/components/views/Start';
+import ViewInfo from '@/components/views/Info';
 
 const VIEWS = {
   NONE: null,
+  INFO: 'info',
   START: 'start',
   PRINTER: 'priner'
+};
+
+const THEMES = {
+  amber: {
+    primary: [255, 204, 0], // [51, 255, 0],
+    secondary: [0, 0, 0] // [51, 255, 0]
+  },
+  green: {
+    primary: [51, 255, 0],
+    secondary: [0, 0, 0]
+  }
 };
 
 export default {
   components: {
     ViewPrinter,
     ViewStart,
+    ViewInfo,
     AppMenu,
     AppMenuItem,
     AppMenuText,
@@ -89,7 +108,8 @@ export default {
     AppMenuDivider,
     DialogError,
     DialogRemote,
-    DialogServer
+    DialogServer,
+    DialogOptions
   },
 
   data () {
@@ -100,18 +120,16 @@ export default {
 
       currentView: VIEWS.PRINTER,
 
-      colors: {
-        primary: [255, 204, 0], // [51, 255, 0],
-        secondary: [0, 0, 0] // [51, 255, 0]
-      },
       ready: false,
-      loading: false,
       fullscreen: false,
       version: remote.process.env.VERSION
     };
   },
 
   computed: {
+    colors () {
+      return THEMES[this.$config.data.theme];
+    },
     clientConnected () {
       return this.$client.connected;
     },
@@ -129,13 +147,19 @@ export default {
     await this.$server.refresh();
     await this.$config.load();
 
-    if (this.$config.get('remember')) {
-      const port = this.$config.get('port');
-      const host = this.$config.get('host');
-      if (this.$config.get('remember') === 'local' && !this.$server.options.active) {
-        await this.$server.start(port);
+    if (this.$config.get('startType')) {
+      try {
+        const port = this.$config.get('port');
+        const host = this.$config.get('host');
+        if (this.$config.get('startType') === 'local' && !this.$server.options.active) {
+          await this.$server.start(port);
+        }
+        if (port) {
+          await this.$client.connect(port, host);
+        }
+      } catch (error) {
+        this.$errorList.add(error);
       }
-      this.$client.connect(port, host);
     }
     this.ready = true;
     // eslint-disable-next-line no-use-before-define
@@ -211,10 +235,12 @@ export default {
       });
     },
     onClickLoad () {},
-    onClickOptions () {},
+    onClickOptions () {
+      this.showOptionsDialog();
+    },
 
     async onApplyViewStart ({ type, remember }) {
-      this.$config.set('remember', remember && type);
+      this.$config.set('startType', remember && type);
       await this.$config.save();
       this.$client.once('connect', async () => {
         this.$config.set('host', this.$client.host);
@@ -231,10 +257,13 @@ export default {
       }
     },
     showServerDialog () {
-      return this.$refs.serverDialog.show();
+      return this.$refs.dialogServer.show();
     },
     showRemoteDialog () {
-      return this.$refs.remoteDialog.show();
+      return this.$refs.dialogRemote.show();
+    },
+    showOptionsDialog () {
+      return this.$refs.dialogOptions.show();
     }
 
   }
@@ -243,6 +272,8 @@ export default {
 </script>
 
 <style lang="postcss" scoped>
+@import "@/assets/css/transitions.pcss";
+
 .header-drag {
   width: 100%;
   height: 100%;
@@ -255,6 +286,24 @@ export default {
 
   &:active {
     cursor: grabbing;
+  }
+}
+
+.status-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background: rgb(0 0 0 / 80%);
+  transition: opacity 0.3s 1s;
+
+  @nest .ready & {
+    pointer-events: none;
+    opacity: 0;
   }
 }
 
@@ -282,6 +331,7 @@ export default {
   height: 100%;
   font-family: monospace;
   color: var(--color-primary);
+  user-select: none;
 
   & > .header {
     border-bottom: solid var(--color-primary) calc(2 / 16 * 1em);
@@ -296,10 +346,12 @@ export default {
     height: calc(22 / 16 * 1em);
   }
 
-  & > .content {
+  & > .app-content {
     position: relative;
     display: flex;
     flex-direction: column;
+    height: calc(100% - ((24 ) / 16 * 1em) * 2);
+    overflow: auto;
 
     & > div:first-child {
       height: 100%;
@@ -307,19 +359,11 @@ export default {
       /* height: calc(100% - ((32 + 8) / 16 * 1em) * 1); */
     }
 
-    height: calc(100% - ((24 ) / 16 * 1em) * 2);
-
     /* - (4 / 16 * 1em) */
   }
 
   & >>> .preview {
     transition: opacity 0.2s;
-  }
-
-  &.loading {
-    & >>> .preview {
-      opacity: 0.6;
-    }
   }
 }
 </style>

@@ -4,7 +4,7 @@
       <slot name="head" />
     </template>
     <template #default>
-      <input-dropdown :label="label" :value="value" :options="options" @input="$emit('input', Number($event))" />
+      <input-dropdown :label="label" :value="String(value)" :options="options" @input="$emit('input', Number($event))" />
     </template>
   </action-dialog>
 </template>
@@ -35,7 +35,7 @@ export default {
         ['Left', ALIGN.LEFT],
         ['Center', ALIGN.CENTER],
         ['Right', ALIGN.RIGHT]
-      ].map(([title, value]) => new DropDownOptionDescription({ title, value }))
+      ].map(([title, value]) => new DropDownOptionDescription({ title, value: String(value) }))
 
     };
   }

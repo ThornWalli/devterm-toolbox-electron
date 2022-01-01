@@ -1,11 +1,9 @@
 import { resolve, join } from 'path';
 import url from 'url';
-import fs from 'fs';
 // eslint-disable-next-line no-unused-vars
-import { app, BrowserWindow, Menu } from 'electron';
+import { app, BrowserWindow } from 'electron';
 import pkg from '../../package.json';
 import Server from '../classes/Server';
-import { getDefaultConfig } from '../classes/Config';
 const isDev = process.env.NODE_ENV !== 'production';
 
 if (isDev) {
@@ -13,12 +11,12 @@ if (isDev) {
     app.setVersion(pkg.version);
   }
   if (pkg.productName) {
-    app.setName(pkg.productName);
+    app.name = pkg.productName;
   } else if (pkg.name) {
-    app.setName(pkg.name);
+    app.name = pkg.name;
   }
-  app.setPath('userData', join(app.getPath('appData'), app.getName()));
-  app.setPath('userCache', join(app.getPath('cache'), app.getName()));
+  app.setPath('userData', join(app.getPath('appData'), app.name));
+  app.setPath('userCache', join(app.getPath('cache'), app.name));
   app.setAppPath(resolve('../../'));
 }
 
@@ -35,7 +33,8 @@ function createMainWindow () {
     webPreferences: {
       nodeIntegration: true,
       fullscreen: true,
-      webSecurity: false
+      webSecurity: false,
+      contextIsolation: false
     },
     title: pkg.productName,
     // titleBarStyle: 'hidden',
@@ -63,7 +62,7 @@ function createMainWindow () {
   }
 
   window.on('closed', () => {
-    server && server.close();
+    server && server.stop();
     mainWindow = null;
   });
 
@@ -97,108 +96,5 @@ app.on('ready', () => {
   mainWindow = createMainWindow();
 });
 
-// const isMac = process.platform === 'darwin'; ;
-
-// const template = [
-//   // { role: 'appMenu' }
-//   ...(isMac
-//     ? [{
-//         label: pkg.name,
-//         submenu: [
-//           { role: 'about' },
-//           { type: 'separator' },
-//           // { role: 'services' },
-//           // { type: 'separator' },
-//           // { role: 'hide' },
-//           // { role: 'hideOthers' },
-//           // { role: 'unhide' },
-//           { role: 'reload' },
-//           { role: 'forceReload' },
-//           { role: 'toggleDevTools' },
-//           { role: 'togglefullscreen' },
-//           { type: 'separator' },
-//           { role: 'quit' }
-//         ]
-//       }]
-//     : []), {
-//     label: 'Edit',
-//     submenu: [
-//       { role: 'undo' },
-//       { role: 'redo' },
-//       { type: 'separator' },
-//       { role: 'cut' },
-//       { role: 'copy' },
-//       { role: 'paste' },
-//       ...(isMac
-//         ? [
-//             { role: 'pasteAndMatchStyle' },
-//             { role: 'delete' },
-//             { role: 'selectAll' },
-//             { type: 'separator' },
-//             {
-//               label: 'Speech',
-//               submenu: [
-//                 { role: 'startSpeaking' },
-//                 { role: 'stopSpeaking' }
-//               ]
-//             }
-//           ]
-//         : [
-//             { role: 'delete' },
-//             { type: 'separator' },
-//             { role: 'selectAll' }
-//           ])
-//     ]
-//   }
-//   // {
-//   //   role: 'help',
-//   //   submenu: [
-//   //     {
-//   //       label: 'Learn More',
-//   //       click: async () => {
-//   //         const { shell } = require('electron');
-//   //         await shell.openExternal('https://electronjs.org');
-//   //       }
-//   //     }
-//   //   ]
-//   // }
-// ];
-
-// const menu = Menu.buildFromTemplate(template);
-// Menu.setApplicationMenu(menu);
-
-const { ipcMain } = require('electron');
-
-ipcMain.handle('server:start', (event, port) => {
-  return server.start(port);
-});
-ipcMain.handle('server:stop', (event) => {
-  return server.stop();
-});
-ipcMain.handle('server:getOptions', (event) => {
-  return getServerOptions(server);
-});
-
-const userDataPath = app.getPath('userData');
-const configFile = resolve(userDataPath, 'config.json');
-
-ipcMain.handle('config:load', async (event) => {
-  try {
-    return JSON.parse(await fs.promises.readFile(configFile, 'utf-8'));
-  } catch (error) {
-    return getDefaultConfig();
-  }
-});
-
-ipcMain.handle('config:save', (event, data) => {
-  fs.promises.writeFile(configFile, JSON.stringify(data), 'utf-8');
-});
-
-const getServerOptions = (server) => {
-  return {
-    active: server.active,
-    port: server.port,
-    hosts: server.hosts,
-    activeSessions: server.sockets.size
-  };
-};
+// require('./menu')(server);
+require('./ipc').default(server);

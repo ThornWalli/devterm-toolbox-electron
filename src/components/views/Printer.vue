@@ -1,9 +1,9 @@
 <template>
   <app-view class="view-printer">
-    <div class="preview">
+    <div :key="JSON.stringify(colors)" class="printer-preview">
       <div>
         <div :class="{'has-selected': selectedAction}">
-          <div v-if="previewItems.length < 1" class="empty-actions">
+          <div v-if="previewItems.length < 1" class="actions-empty">
             Add a Action!
           </div>
           <div v-for="(item, index) in previewItems" :id="`anchor-action-${item.id}`" :key="index" :class="{'selected' : selectedAction && selectedAction.id === item.id}">
@@ -17,21 +17,25 @@
           </div>
         </div>
       </div>
-      <input-text-button color="primary" class="print-button" disabled>
+      <input-text-button color="primary" class="print-button" @click="onClickPrint">
         Print
       </input-text-button>
+      <transition name="fade">
+        <div v-if="loading" class="layer-loading">
+          Loading
+        </div>
+      </transition>
     </div>
     <actions
-      :value="actions"
+      v-model="actions"
+      class="printer-actions"
       :colors="colors"
-      @input="actions = $event"
       @selectAction="selectedAction = $event"
     />
   </app-view>
 </template>
 
 <script>
-import { executeActions, ActionDescription } from '@/utils/action';
 import AppView from '@/components/app/View';
 import InputIconButton from '@/components/inputs/IconButton';
 import InputTextButton from '@/components/inputs/TextButton';
@@ -40,6 +44,10 @@ import Actions from '@/components/Actions';
 
 import testData from '@/data/test';
 
+import SvgLoader from '@/assets/svg/Loader.svg?vue-template';
+import { executeActions } from '@/utils/action/client';
+import ActionDescription from '@/classes/ActionDescription';
+
 export default {
   components: {
     AppView,
@@ -47,7 +55,8 @@ export default {
     InputIconButton,
     InputTextButton,
     InputDropDown,
-    Actions
+    Actions,
+    SvgLoader
   },
 
   props: {
@@ -63,6 +72,7 @@ export default {
     return {
       actions: exampleData(),
       previewItems: [],
+      loading: true,
       selectedAction: null
     };
   },
@@ -87,6 +97,10 @@ export default {
           this.loading = false;
         });
       }, 500);
+    },
+
+    onClickPrint () {
+      this.$client.executeActions(this.actions);
     }
 
   }
@@ -100,10 +114,12 @@ function exampleData () {
 </script>
 
 <style lang="postcss" scoped>
+@import "@/assets/css/transitions.pcss";
+
 .view-printer {
   display: flex;
 
-  & .empty-actions {
+  & .actions-empty {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -114,7 +130,7 @@ function exampleData () {
     margin: calc(8 / 12 * 1em);
   }
 
-  & .preview {
+  & .printer-preview {
     position: relative;
     display: flex;
     flex-direction: column;
@@ -147,5 +163,45 @@ function exampleData () {
       }
     }
   }
+
+  & .layer-loading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    background: rgb(0 0 0 / 80%);
+    transition: opacity 0.3s 1s;
+
+    &::after {
+      display: inline-block;
+      content: "";
+      animation: loading;
+      animation-duration: 4s;
+      animation-iteration-count: infinite;
+    }
+  }
 }
+
+@keyframes loading {
+  0% {
+    content: "";
+  }
+
+  25% {
+    content: ".";
+  }
+
+  50% {
+    content: "..";
+  }
+
+  75% {
+    content: "...";
+  }
+}
+
 </style>

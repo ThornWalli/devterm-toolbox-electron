@@ -8,6 +8,7 @@ class ErrorList {
 
   add (message, title) {
     if (message instanceof Error) {
+      console.error(message);
       message.type && (title = message.type);
       message = message.message;
     }

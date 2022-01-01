@@ -1,6 +1,5 @@
 import EventEmitter from 'events';
 import { io } from 'socket.io-client';
-
 export default class Client extends EventEmitter {
   constructor () {
     super();
@@ -45,29 +44,26 @@ export default class Client extends EventEmitter {
     return this.socket?.io?.opts?.secure;
   }
 
+  promiseEmit (name, value) {
+    return new Promise(resolve => {
+      this.socket.emit(name, value, resolve);
+    });
+  }
+
   disconnect () {
     this.socket.disconnect();
     this.socket = null;
     this.connected = false;
   }
 
+  async getInfo () {
+    const value = await this.promiseEmit('getInfo');
+    console.log('getInfo', value);
+    return value;
+  }
+
   async executeActions (actions) {
-    const value = await this.socket.pemit('executeActions', actions);
+    const value = await this.promiseEmit('executeActions', actions);
     console.log('executeActions', value);
-  }
-
-  async getTemperatures () {
-    const value = await this.socket.pemit('getTemperatures');
-    console.log('getTemperatures', value);
-  }
-
-  async getDevTermType () {
-    const value = await this.socket.pemit('getDevTermType');
-    console.log('getDevTermType', value);
-  }
-
-  async getBattery () {
-    const value = await this.socket.pemit('getBattery');
-    console.log('getBattery', value);
   }
 }

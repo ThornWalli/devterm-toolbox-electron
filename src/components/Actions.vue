@@ -20,7 +20,7 @@
               :id="action.id"
               :property="ACTION_DEFINITIONS[action.type].property"
               :display="ACTION_DEFINITIONS[action.type].display(action.value)"
-              :can-select="!!ACTION_DEFINITIONS[action.type].dialog"
+              :can-select="!!ACTION_DIALOGS[action.type]"
               :item-states="itemStates"
               :data-id="action.id"
               :draggable="!itemStates[action.id]"
@@ -68,7 +68,9 @@
 
 <script>/* eslint-disable vue/no-unused-components */
 import { fromEvent } from 'rxjs';
-import { getComponentByType, getActionTypeOptions, createAction, ACTION_DEFINITIONS } from '@/utils/action';
+import { createAction, ACTION_DEFINITIONS } from '@/utils/action';
+import { getComponentByType, getActionTypeOptions, ACTION_DIALOGS } from '@/utils/action/client';
+
 import InputIconButton from '@/components/inputs/IconButton';
 import InputDropDown from '@/components/inputs/DropDown';
 import SvgIconArrowUp from '@/assets/svg/icons/arrow-up.svg?vue-template';
@@ -102,6 +104,7 @@ export default {
   data () {
     return {
       ACTION_DEFINITIONS,
+      ACTION_DIALOGS,
       getComponentByType,
       selectedActionId: null,
       //   selectedAction: null,
@@ -119,7 +122,7 @@ export default {
       return this.model.find(action => action.id === this.selectedActionId);
     },
     dialogComponent () {
-      return this.selectedAction && ACTION_DEFINITIONS[this.selectedAction.type].dialog;
+      return this.selectedAction && ACTION_DIALOGS[this.selectedAction.type];
     }
   },
   watch: {

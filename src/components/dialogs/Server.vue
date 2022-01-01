@@ -23,7 +23,7 @@
         :value="port"
         @input="port = parseInt($event)"
       />
-      <input-check-box v-model="autoConnect" label="Auto connect" />
+      <input-check-box v-if="!active" v-model="autoConnect" label="Auto connect" />
     </template>
     <template #buttons>
       <input-text-button v-if="!active" color="primary" text="Start" @click="onClickStart" />
@@ -96,14 +96,14 @@ export default {
         await this.$server.start(this.port);
         await this.$client.connect(this.port, this.$server.options.hosts[0]);
       } catch (error) {
-        console.error(error);
+        this.$errorList.add(error);
       }
     },
     async onClickStop () {
       try {
         await this.$server.stop();
       } catch (error) {
-        console.error(error);
+        this.$errorList.add(error);
       }
     }
   }
