@@ -9,6 +9,7 @@ import { ACTION_DEFINITIONS } from '../utils/action';
 export const hasPrinterSerialPort = async () => {
   try {
     await fs.promises.access(SERIAL_PORT_IN, fs.F_OK);
+    return true;
   } catch (error) {
     return false;
   }
@@ -64,7 +65,7 @@ export default class Server {
   }
 
   registerEvents (socket) {
-    socket.on('executeActions', onSocketExecuteActions(this.printer));
+    socket.on('executeActions', onSocketExecuteActions(this.printer, this.disabled));
     socket.on('getInfo', onSocketGetInfo);
     // #####
     socket.on('disconnect', () => {
@@ -80,7 +81,7 @@ export default class Server {
   }
 };
 
-const onSocketExecuteActions = printer => (actions) => {
+const onSocketExecuteActions = (printer, disabled) => (actions) => {
   // prepare actions
   const preparedActions = actions.map(action => {
     if ('printerCommand' in ACTION_DEFINITIONS[action.type]) {
@@ -90,7 +91,7 @@ const onSocketExecuteActions = printer => (actions) => {
     return null;
   }).filter(Boolean);
 
-  if (this.disabled) {
+  if (disabled) {
     console.log('Printer not found, serivce is disabled!');
   } else {
     preparedActions.forEach(command => command(printer));

@@ -16,7 +16,7 @@
         <div><input-check-box v-model="model.imageOptions.flipY" label="Flip Y" /></div>
       </div>
       <input-text-field
-        v-model="model.width"
+        v-model="model.imageOptions.width"
         type="number"
         min="1"
         step="1"
