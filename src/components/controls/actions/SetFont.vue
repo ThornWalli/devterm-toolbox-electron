@@ -4,7 +4,7 @@
       <slot name="head" />
     </template>
     <template #default>
-      <input-dropdown :label="label" :options="options" :value="value" @input="$emit('input', $event)" />
+      <input-dropdown :label="label" :options="options" :value="String(value)" @input="$emit('input', $event)" />
     </template>
   </action-dialog>
 </template>
@@ -30,7 +30,7 @@ export default {
   data () {
     return {
       label: 'Select font',
-      options: Object.keys(FONT).map((value) => new DropDownOptionDescription({ title: value, value: FONT[value] }))
+      options: Object.keys(FONT).map((value) => new DropDownOptionDescription({ title: value, value: String(FONT[value]) }))
     };
   }
 };

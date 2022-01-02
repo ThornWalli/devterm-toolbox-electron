@@ -1,4 +1,3 @@
-
 import http from 'http';
 import { createPrinter } from 'node-devterm/index.js';
 import { Server as SocketIoServer } from 'socket.io';
@@ -48,7 +47,7 @@ export default class Server {
   }
 
   registerEvents (socket) {
-    socket.on('executeActions', onSocketExecuteActions);
+    socket.on('executeActions', onSocketExecuteActions(this.printer));
     socket.on('getInfo', onSocketGetInfo);
     // #####
     socket.on('disconnect', () => {
@@ -64,7 +63,7 @@ export default class Server {
   }
 };
 
-const onSocketExecuteActions = (actions) => {
+const onSocketExecuteActions = printer => (actions) => {
   // prepare actions
   const preparedActions = actions.map(action => {
     if ('printerCommand' in ACTION_DEFINITIONS[action.type]) {
@@ -74,7 +73,7 @@ const onSocketExecuteActions = (actions) => {
     return null;
   }).filter(Boolean);
 
-  preparedActions.forEach(command => command(this.printer));
+  preparedActions.forEach(command => command(printer));
   console.info(`execute ${preparedActions.length} actions…`);
   return true;
 };

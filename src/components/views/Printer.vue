@@ -44,7 +44,6 @@ import Actions from '@/components/Actions';
 
 import testData from '@/data/test';
 
-import SvgLoader from '@/assets/svg/Loader.svg?vue-template';
 import { executeActions } from '@/utils/action/client';
 import ActionDescription from '@/classes/ActionDescription';
 
@@ -55,8 +54,7 @@ export default {
     InputIconButton,
     InputTextButton,
     InputDropDown,
-    Actions,
-    SvgLoader
+    Actions
   },
 
   props: {

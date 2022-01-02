@@ -68,8 +68,8 @@
 
 <script>/* eslint-disable vue/no-unused-components */
 import { fromEvent } from 'rxjs';
-import { createAction, ACTION_DEFINITIONS } from '@/utils/action';
-import { getComponentByType, getActionTypeOptions, ACTION_DIALOGS } from '@/utils/action/client';
+import { ACTION_DEFINITIONS } from '@/utils/action';
+import { createAction, getComponentByType, getActionTypeOptions, ACTION_DIALOGS } from '@/utils/action/client';
 
 import InputIconButton from '@/components/inputs/IconButton';
 import InputDropDown from '@/components/inputs/DropDown';
@@ -277,6 +277,10 @@ export default {
     height: calc(32 / 16 * 1em);
     margin: calc(16 / 16 * 1em) 0;
     margin-bottom: calc(8 / 16 * 1em);
+
+    & > * {
+      width: 100%;
+    }
   }
 
   & ul {

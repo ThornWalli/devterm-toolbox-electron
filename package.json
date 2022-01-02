@@ -8,11 +8,13 @@
     "compile": "electron-webpack",
     "dist": "npm run compile && electron-builder",
     "dist:dir": "yarn dist --dir -c.compression=store -c.mac.identity=null",
-    "dev:server": "cross-env NODE_ENV=development nodemon ./server/index.js --watch server",
+    "server": "node ./server/index.mjs",
+    "dev:server": "cross-env NODE_ENV=development nodemon ./server/index.mjs --watch server",
     "rebuild": "electron-rebuild -f -w serialport"
   },
   "dependencies": {
     "electron-rebuild": "^3.2.5",
+    "esm": "^3.2.25",
     "express": "^4.17.2",
     "node-devterm": "github:ThornWalli/node-devterm#feature/init",
     "socket.io": "^4.4.0",
