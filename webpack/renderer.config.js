@@ -27,7 +27,17 @@ module.exports = function (config) {
     ]
   });
 
+  // config.resolve.alias['node-devterm'] = path.resolve(__dirname, '../node_modules/node-devterm/src');
+  config.resolve.alias['node-devterm'] = path.resolve(__dirname, '../node_modules/node-devterm/src');
   config.resolve.alias['@'] = path.resolve(__dirname, '../src');
+
+  const babelLoader = config.module.rules.find(rule => {
+    return rule.use.loader === 'babel-loader';
+  });
+  babelLoader.exclude = {
+    and: [/node_modules/],
+    not: [/node-devterm/, /serialport/, /@serialport/]
+  };
 
   // svg
   config.module.rules = config.module.rules.map((rule) => {

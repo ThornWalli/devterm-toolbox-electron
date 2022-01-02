@@ -172,7 +172,7 @@ export default {
       padding: calc(8 / 16 * 1em);
       padding-top: calc(8 / 16 * 1em);
       margin-top: calc(8 / 16 * 1em);
-      background: black;
+      background: var(--color-secondary);
       border: solid var(--color-primary) 1px;
     }
   }

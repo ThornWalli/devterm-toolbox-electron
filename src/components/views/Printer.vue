@@ -1,5 +1,5 @@
 <template>
-  <app-view class="view-printer">
+  <app-view class="view-printer" :style="style">
     <div :key="JSON.stringify(colors)" class="printer-preview">
       <div>
         <div :class="{'has-selected': selectedAction}">
@@ -61,7 +61,16 @@ export default {
     colors: {
       type: Object,
       default () {
-        return {};
+        return {
+          primary: [255, 204, 0],
+          secondary: [0, 0, 0],
+          printer: {
+            preview: {
+              background: [0, 0, 0],
+              foreground: [255, 204, 0]
+            }
+          }
+        };
       }
     }
   },
@@ -74,12 +83,19 @@ export default {
       selectedAction: null
     };
   },
+  computed: {
+    style () {
+      return {
+        '--color-printer-preview-background': `rgb(${this.colors.printer.preview.background.join(',')})`,
+        '--color-printer-preview-foreground': `rgb(${this.colors.printer.preview.foreground.join(',')})`
+      };
+    }
+  },
   watch: {
     actions () {
       this.render();
     }
   },
-
   mounted () {
     this.render();
   },
@@ -145,7 +161,10 @@ function exampleData () {
         width: 384px;
         padding: 0 calc(((58/50) * 384px - 384px) / 2);
         margin: 48px auto;
-        border: dashed var(--color-primary-40);
+        color: var(--color-printer-preview-foreground);
+        background: var(--color-printer-preview-background);
+
+        /* border: dashed var(--color-primary-40); */
         border-width: 1px;
         box-shadow: 0 0 1em rgb(0 0 0 / 20%);
 

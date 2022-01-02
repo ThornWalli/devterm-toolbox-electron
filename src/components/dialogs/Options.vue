@@ -47,13 +47,14 @@ export default {
   },
   mixins: [MixinDialog],
   inheritAttrs: false,
-
   data () {
     return {
       model: getDefaultConfig(),
       themeOptions: [
         ['Amber', 'amber'],
-        ['Green', 'green']
+        ['Green', 'green'],
+        ['Black & White', 'blackWhite'],
+        ['White & Black', 'whiteBlack']
       ].map(([title, value]) => new DropDownOptionDescription({ title, value })),
       startTypeOptions: [
         ['Select start type', ''],

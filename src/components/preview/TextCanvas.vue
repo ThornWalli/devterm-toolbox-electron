@@ -11,7 +11,7 @@ export default {
     colors: {
       type: Object,
       default () {
-        return { base: [255, 0, 0] };
+        return { printer: { preview: { foreground: [255, 0, 0] } } };
       }
     },
     value: {
@@ -59,7 +59,7 @@ export default {
   },
   methods: {
     getColor (opacity) {
-      return `rgb(${this.colors.primary.join(' ')} / ${opacity * 100}%)`;
+      return `rgb(${this.colors.printer.preview.foreground.join(' ')} / ${opacity * 100}%)`;
     },
     render () {
       global.cancelAnimationFrame(this.animationFrame);

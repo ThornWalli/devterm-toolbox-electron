@@ -87,12 +87,44 @@ const VIEWS = {
 
 const THEMES = {
   amber: {
-    primary: [255, 204, 0], // [51, 255, 0],
-    secondary: [0, 0, 0] // [51, 255, 0]
+    primary: [255, 204, 0],
+    secondary: [0, 0, 0],
+    printer: {
+      preview: {
+        background: [255, 204, 0],
+        foreground: [0, 0, 0]
+      }
+    }
   },
   green: {
     primary: [51, 255, 0],
-    secondary: [0, 0, 0]
+    secondary: [0, 0, 0],
+    printer: {
+      preview: {
+        background: [51, 255, 0],
+        foreground: [0, 0, 0]
+      }
+    }
+  },
+  whiteBlack: {
+    primary: [255, 255, 255],
+    secondary: [0, 0, 0],
+    printer: {
+      preview: {
+        background: [255, 255, 255],
+        foreground: [0, 0, 0]
+      }
+    }
+  },
+  blackWhite: {
+    primary: [0, 0, 0],
+    secondary: [255, 255, 255],
+    printer: {
+      preview: {
+        background: [0, 0, 0],
+        foreground: [255, 255, 255]
+      }
+    }
   }
 };
 
@@ -332,6 +364,7 @@ export default {
   font-family: monospace;
   color: var(--color-primary);
   user-select: none;
+  background: var(--color-secondary);
 
   & > .header {
     border-bottom: solid var(--color-primary) calc(2 / 16 * 1em);
@@ -374,7 +407,7 @@ export default {
 }
 
 ::-webkit-scrollbar-track {
-  box-shadow: inset 0 0 6px rgb(0 0 0 / 30%);
+  /* empty */
 }
 
 ::-webkit-scrollbar-thumb {

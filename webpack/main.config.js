@@ -1,6 +1,7 @@
 const path = require('path');
 
 module.exports = function (config) {
+  config.resolve.alias['node-devterm'] = path.resolve(__dirname, '../node_modules/node-devterm/src');
   config.resolve.alias['@'] = path.resolve(__dirname, '../src');
 
   config.externals.push('serialport');
