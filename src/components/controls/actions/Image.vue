@@ -10,10 +10,10 @@
       <input-file-select label="File" @input="onInputFileSelect" />
 
       <div class="cols">
-        <input-check-box v-model="model.grayscale" label="Grayscale" />
-        <input-check-box v-model="model.rotate" label="Rotate" />
-        <input-check-box v-model="model.flipX" label="Flip X" />
-        <input-check-box v-model="model.flipY" label="Flip Y" />
+        <div><input-check-box v-model="model.imageOptions.grayscale" label="Grayscale" /></div>
+        <div><input-check-box v-model="model.imageOptions.rotate" label="Rotate" /></div>
+        <div><input-check-box v-model="model.imageOptions.flipX" label="Flip X" /></div>
+        <div><input-check-box v-model="model.imageOptions.flipY" label="Flip Y" /></div>
       </div>
       <input-text-field
         v-model="model.width"
