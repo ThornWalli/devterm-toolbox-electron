@@ -1,5 +1,10 @@
-import { ALIGN, FONT } from 'node-devterm/config';
 
+import { createCanvas, loadImage } from 'canvas';
+import { ALIGN, FONT } from 'node-devterm/config';
+import {
+  prepareCanvasForPrint
+} from 'node-devterm/utils/canvas';
+import { getImageDataList } from './canvas';
 export const getDefaultImageOptions = () => {
   return {
     file: null,
@@ -81,7 +86,20 @@ export const ACTION_DEFINITIONS = {
   image: {
     display: () => ({
       title: 'Image'
-    })
+    }),
+    beforePrinterCommand: async (action) => {
+      const value = action.value;
+
+      const img = await loadImage(value.file);
+      let imageCanvas = createCanvas(img.naturalWidth, img.naturalHeight);
+      imageCanvas = prepareCanvasForPrint(imageCanvas, value.imageOptions);
+      const imageContext = imageCanvas.getContext('2d');
+      imageContext.drawImage(img, 0, 0);
+
+      action.value = await getImageDataList(imageCanvas);
+
+      return action;
+    }
   },
   feedPitch: {
     display: ({ type, value }) => ({

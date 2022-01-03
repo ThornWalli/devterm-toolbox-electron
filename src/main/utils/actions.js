@@ -4,7 +4,7 @@ const ACTION_PRINTER_COMMANDS = {
   barcode: (printer, value) => printer.writeBarcode(value.text, value.options, value.imageOptions),
   qrCode: (printer, value) => printer.writeQRCode(value.text, value.options, value.imageOptions),
   text: (printer, value) => printer.writeLine(value),
-  image: (printer, value) => printer.writeImage(value.file, value.imageOptions),
+  image: (printer, value) => value.buffers.forEach(buffer => printer.write(buffer)),
   feedPitch: (printer, { type, value }) => {
     if (type === 'pixel') {
       return printer.feedPitchByPixel(value);

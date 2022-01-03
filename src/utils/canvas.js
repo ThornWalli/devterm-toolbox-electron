@@ -1,4 +1,14 @@
-import { MAX_DOTS } from 'node-devterm/config';
+import { Buffer } from 'buffer';
+import {
+  MAX_DOTS,
+  ASCII_GS,
+  IMAGE_MAX
+} from 'node-devterm/config';
+
+import {
+  get8BitRowsFromImageData, getImageSize,
+  splitCanvasInImageDataChunks
+} from 'node-devterm/utils/image';
 
 export const toDataURL = (targetCanvas) => {
   const canvas = document.createElement('canvas');
@@ -62,4 +72,41 @@ const grayscale = (data, colors) => {
       data[i + 2] = colors.secondary[2];
     }
   }
+};
+export const getImageDataList = async (canvas) => {
+  const imageDatas = await splitCanvasInImageDataChunks(canvas);
+
+  const commandBuffers = imageDatas.map(imageData => {
+    return [Buffer.from(getWriteImageCommand(imageData.width, imageData.height))].concat(get8BitRowsFromImageData(imageData).map(row => uint8ArrayToBuffer(row)));
+  });
+  debugger;
+  return commandBuffers;
+};
+
+const getWriteImageCommand = (width, height) => {
+  const { xL, xH, yL, yH, k } = getImageSize(width, height);
+
+  const cmd = [
+    ASCII_GS,
+    0x76, // 118
+    0x30, // 48,
+    0,
+    xL, xH, yL, yH
+  ];
+
+  if (cmd[0] === ASCII_GS && cmd[1] === 118 && cmd[2] === 48) {
+    if (!(k <= IMAGE_MAX)) {
+      throw new Error(`Image too large; ${k} > ${IMAGE_MAX}`);
+    }
+  }
+
+  return cmd;
+};
+export const uint8ArrayToBuffer = function (array) {
+  const buf = Buffer.alloc(array.byteLength);
+  const view = new Uint8Array(array);
+  for (let i = 0; i < buf.length; ++i) {
+    buf[i] = view[i];
+  }
+  return buf;
 };

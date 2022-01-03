@@ -43,6 +43,7 @@
     "vite-svg-loader": "^3.1.1"
   },
   "dependencies": {
+    "buffer": "^6.0.3",
     "events": "^3.3.0",
     "socket.io": "^4.4.0",
     "socket.io-client": "^4.4.0",

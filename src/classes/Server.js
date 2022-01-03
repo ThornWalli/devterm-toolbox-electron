@@ -88,11 +88,12 @@ class Server {
   }
 };
 
-const onSocketExecuteActions = (printer, disabled) => async (actions) => {
+const onSocketExecuteActions = (printer, disabled) => (actions) => {
   // prepare actions
+  console.log(actions);
   const preparedActions = actions.map(action => {
-    if ('printerCommand' in ACTION_PRINTER_COMMANDS[action.type]) {
-      return (printer) => ACTION_PRINTER_COMMANDS[action.type].printerCommand(printer, action.value);
+    if (action.type in ACTION_PRINTER_COMMANDS) {
+      return (printer) => ACTION_PRINTER_COMMANDS[action.type](printer, action.value);
     }
     console.warn(`no printer command found for \`${action.type}\``);
     return null;
@@ -101,9 +102,7 @@ const onSocketExecuteActions = (printer, disabled) => async (actions) => {
   if (disabled) {
     console.log('Printer not found, serivce is disabled!');
 
-    const { file, imageOptions } = actions.find(action => action.type === 'image').value;
-    console.log(file, imageOptions);
-    console.log(await getCanvasFromImage(file));
+    console.log(actions.find(action => action.type === 'image'));
   } else {
     preparedActions.forEach(command => command(printer));
   }

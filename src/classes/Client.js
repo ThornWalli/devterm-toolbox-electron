@@ -1,5 +1,6 @@
 import EventEmitter from 'events';
 import { io } from 'socket.io-client';
+import { ACTION_DEFINITIONS } from '@/../utils/action';
 export default class Client extends EventEmitter {
   constructor () {
     super();
@@ -63,6 +64,9 @@ export default class Client extends EventEmitter {
   }
 
   async executeActions (actions) {
+    // prepare
+    actions = await Promise.all(actions.map(async action => 'beforePrinterCommand' in ACTION_DEFINITIONS[action.type] ? (await ACTION_DEFINITIONS[action.type].beforePrinterCommand(action)) : action));
+
     const value = await this.promiseEmit('executeActions', actions);
     console.log('executeActions', value);
   }
