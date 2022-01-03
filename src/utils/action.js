@@ -92,10 +92,10 @@ export const ACTION_DEFINITIONS = {
 
       const img = await loadImage(value.file);
       let imageCanvas = createCanvas(img.naturalWidth, img.naturalHeight);
-      imageCanvas = prepareCanvasForPrint(imageCanvas, value.imageOptions);
       const imageContext = imageCanvas.getContext('2d');
       imageContext.drawImage(img, 0, 0);
 
+      imageCanvas = prepareCanvasForPrint(imageCanvas, value.imageOptions);
       action.value = await getImageDataList(imageCanvas);
 
       return action;

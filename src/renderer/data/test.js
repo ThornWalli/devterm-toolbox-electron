@@ -14,7 +14,6 @@ export const writeHeadline = (text) => {
 
 export default [
   { type: 'text', value: 'Test' },
-  // { type: 'feedPitch', value: { value: 14, type: 'font' } },
   // { type: 'setAlign', value: ALIGN.CENTER },
   // {
   //   type: 'barcode',
@@ -85,10 +84,11 @@ export default [
         rotate: false,
         flipX: false,
         flipY: false,
-        width: null
+        width: 100
       }
     }
-  }
+  },
+  { type: 'feedPitch', value: { value: 14, type: 'font' } }
   // { type: 'reset' },
   // { type: 'cutLine' },
 

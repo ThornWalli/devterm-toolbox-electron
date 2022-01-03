@@ -79,7 +79,6 @@ export const getImageDataList = async (canvas) => {
   const commandBuffers = imageDatas.map(imageData => {
     return [Buffer.from(getWriteImageCommand(imageData.width, imageData.height))].concat(get8BitRowsFromImageData(imageData).map(row => uint8ArrayToBuffer(row)));
   });
-  debugger;
   return commandBuffers;
 };
 

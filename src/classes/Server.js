@@ -88,7 +88,7 @@ class Server {
   }
 };
 
-const onSocketExecuteActions = (printer, disabled) => (actions) => {
+const onSocketExecuteActions = (printer, disabled) => async (actions) => {
   // prepare actions
   console.log(actions);
   const preparedActions = actions.map(action => {
@@ -104,7 +104,7 @@ const onSocketExecuteActions = (printer, disabled) => (actions) => {
 
     console.log(actions.find(action => action.type === 'image'));
   } else {
-    preparedActions.forEach(command => command(printer));
+    await preparedActions.reduce((result, command) => result.then(() => command(printer)), Promise.resolve());
   }
   console.log(`execute ${preparedActions.length} actions…`);
   return true;
