@@ -1,10 +1,11 @@
 
-import fs from 'fs';
-import { resolve } from 'path';
-import { app } from 'electron';
-import { getDefaultConfig } from '../classes/Config';
+const fs = require('fs');
+const { resolve } = require('path');
+const { app } = require('electron');
+const esmRequire = require('esm')(module);
+const { getDefaultConfig } = esmRequire('../utils/config');
 
-export default (server) => {
+const ipc = (server) => {
   const { ipcMain } = require('electron');
 
   ipcMain.handle('startServer', async (event, port) => {
@@ -14,6 +15,10 @@ export default (server) => {
       server.stop();
       return error;
     }
+  });
+
+  ipcMain.handle('getCurrentVersion', (event) => {
+    return app.getVersion();
   });
   ipcMain.handle('stopServer', (event) => {
     return server.stop();
@@ -46,3 +51,5 @@ const getServerOptions = (server) => {
     activeSessions: server.sockets.size
   };
 };
+
+module.exports = { default: ipc };

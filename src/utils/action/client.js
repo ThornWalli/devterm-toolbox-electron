@@ -1,24 +1,24 @@
 
 import { DEFAULT_DENSITY, ALIGN, FONT, getDefaultConfig, MAX_PIXELS_FONT } from 'node-devterm/config';
 import { getDefaultBarcodeOptions, getDefaultImageOptions, getDefaultQRCodeOptions } from '../action';
-import ActionSetAlign from '@/components/controls/actions/SetAlign';
-import ActionSetFont from '@/components/controls/actions/SetFont';
-import ActionSetMargin from '@/components/controls/actions/SetMargin';
-import ActionSetLineSpace from '@/components/controls/actions/SetLineSpace';
-import ActionSetWordGap from '@/components/controls/actions/SetWordGap';
-import ActionSetDensity from '@/components/controls/actions/SetDensity';
-import ActionText from '@/components/controls/actions/Text';
-import ActionImage from '@/components/controls/actions/Image';
-import ActionQrCode from '@/components/controls/actions/QrCode';
-import ActionFeedPitch from '@/components/controls/actions/FeedPitch';
-import { DropDownOptionDescription } from '@/components/base/DropDown';
+import ActionSetAlign from '@/components/controls/actions/SetAlign.vue';
+import ActionSetFont from '@/components/controls/actions/SetFont.vue';
+import ActionSetMargin from '@/components/controls/actions/SetMargin.vue';
+import ActionSetLineSpace from '@/components/controls/actions/SetLineSpace.vue';
+import ActionSetWordGap from '@/components/controls/actions/SetWordGap.vue';
+import ActionSetDensity from '@/components/controls/actions/SetDensity.vue';
+import ActionText from '@/components/controls/actions/Text.vue';
+import ActionImage from '@/components/controls/actions/Image.vue';
+import ActionQrCode from '@/components/controls/actions/QrCode.vue';
+import ActionFeedPitch from '@/components/controls/actions/FeedPitch.vue';
+import { DropDownOptionDescription } from '@/components/base/DropDown.vue';
 
-import PreviewTextCanvas from '@/components/preview/TextCanvas';
-import PreviewImageCanvas from '@/components/preview/ImageCanvas';
-import PreviewQrCodeCanvas from '@/components/preview/QrCodeCanvas';
-import PreviewBarcodeCanvas from '@/components/preview/BarcodeCanvas';
-import PreviewFeedPitch from '@/components/preview/FeedPitch';
-import ActionDescription from '@/classes/ActionDescription';
+import PreviewTextCanvas from '@/components/preview/TextCanvas.vue';
+import PreviewImageCanvas from '@/components/preview/ImageCanvas.vue';
+import PreviewQrCodeCanvas from '@/components/preview/QrCodeCanvas.vue';
+import PreviewBarcodeCanvas from '@/components/preview/BarcodeCanvas.vue';
+import PreviewFeedPitch from '@/components/preview/FeedPitch.vue';
+import ActionDescription from '@/../classes/ActionDescription';
 
 export const getActionTypeOptions = () => {
   return [

@@ -1,12 +1,19 @@
-import http from 'http';
-import fs from 'fs';
-import { Server as SocketIoServer } from 'socket.io';
-import { SERIAL_PORT_IN } from 'node-devterm/utils/devterm';
-import { createPrinter } from 'node-devterm';
-import { getNetworkAddresses } from '../utils/network';
-import { ACTION_DEFINITIONS } from '../utils/action';
+const http = require('http');
+const fs = require('fs');
+const { Server: SocketIoServer } = require('socket.io');
+const { SERIAL_PORT_IN, getThermalPrinterPort } = require('node-devterm/utils/devterm');
+// import { createPrinter } from 'node-devterm';
 
-export const hasPrinterSerialPort = async () => {
+const { getCanvasFromImage } = require('node-devterm/utils/canvas');
+const { Printer } = require('node-devterm');
+const { getNetworkAddresses } = require('../main/utils/network');
+const { ACTION_PRINTER_COMMANDS } = require('../main/utils/actions');
+
+const createPrinter = () => {
+  return new Printer(getThermalPrinterPort());
+};
+
+const hasPrinterSerialPort = async () => {
   try {
     await fs.promises.access(SERIAL_PORT_IN, fs.F_OK);
     return true;
@@ -16,7 +23,7 @@ export const hasPrinterSerialPort = async () => {
 };
 
 const DEFAULT_PORT = (process.env.DEVTERM_TOOLBOX_PORT || 3000);
-export default class Server {
+class Server {
   constructor () {
     this.disabled = false;
     this.port = DEFAULT_PORT;
@@ -58,7 +65,7 @@ export default class Server {
 
   async stop () {
     console.log('server stop');
-    await new Promise(resolve => this.io.close(resolve));
+    await new Promise(resolve => this.io && this.io.close(resolve));
     await new Promise(resolve => { this.server.close(resolve); });
     this.active = false;
     this.sockets = new Map();
@@ -81,11 +88,11 @@ export default class Server {
   }
 };
 
-const onSocketExecuteActions = (printer, disabled) => (actions) => {
+const onSocketExecuteActions = (printer, disabled) => async (actions) => {
   // prepare actions
   const preparedActions = actions.map(action => {
-    if ('printerCommand' in ACTION_DEFINITIONS[action.type]) {
-      return (printer) => ACTION_DEFINITIONS[action.type].printerCommand(printer, action.value);
+    if ('printerCommand' in ACTION_PRINTER_COMMANDS[action.type]) {
+      return (printer) => ACTION_PRINTER_COMMANDS[action.type].printerCommand(printer, action.value);
     }
     console.warn(`no printer command found for \`${action.type}\``);
     return null;
@@ -93,6 +100,10 @@ const onSocketExecuteActions = (printer, disabled) => (actions) => {
 
   if (disabled) {
     console.log('Printer not found, serivce is disabled!');
+
+    const { file, imageOptions } = actions.find(action => action.type === 'image').value;
+    console.log(file, imageOptions);
+    console.log(await getCanvasFromImage(file));
   } else {
     preparedActions.forEach(command => command(printer));
   }
@@ -107,4 +118,10 @@ const onSocketGetInfo = (value, reply) => {
     type: 'AXX',
     battery: 100
   });
+};
+
+module.exports = {
+  default: Server,
+  createPrinter,
+  hasPrinterSerialPort
 };

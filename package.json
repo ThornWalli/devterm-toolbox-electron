@@ -1,37 +1,27 @@
 {
   "name": "devterm-toolbox-electron",
-  "productName": "devterm-toolbox",
   "version": "0.0.0",
-  "license": "MIT",
+  "description": "A minimal Electron + Vue application",
+  "main": "src/main/main.js",
   "scripts": {
     "postinstall": "npm run rebuild",
-    "dev": "electron-webpack dev",
-    "compile": "electron-webpack",
-    "dist": "npm run compile && electron-builder",
-    "dist:dir": "yarn dist --dir -c.compression=store -c.mac.identity=null",
-    "rebuild": "electron-rebuild -f -w serialport",
-    "build:server": "babel ./server/index.js -d ./server/dist"
-  },
-  "dependencies": {
-    "electron-rebuild": "^3.2.5",
-    "express": "^4.17.2",
-    "node-devterm": "github:ThornWalli/node-devterm#feature/init",
-    "socket.io": "^4.4.0",
-    "socket.io-client": "^4.4.0",
-    "source-map-support": "^0.5.16",
-    "vue": "^2.6.14",
-    "vue-svg-loader": "^0.16.0"
+    "dev": "node scripts/dev-server.js",
+    "build": "node scripts/build-vue.js && electron-builder -c config/electron-builder.json",
+    "build:win": "node scripts/build-vue.js && electron-builder -c config/electron-builder.json --win",
+    "build:mac": "node scripts/build-vue.js && electron-builder -c config/electron-builder.json --mac",
+    "build:linux": "node scripts/build-vue.js && electron-builder -c config/electron-builder.json --linux",
+    "rebuild": "electron-rebuild -f -w @serialport"
   },
   "devDependencies": {
-    "@babel/eslint-parser": "^7.16.3",
-    "cross-env": "^7.0.3",
-    "css-loader": "^5.2.7",
-    "cssnano": "^4.1.11",
-    "electron": "8.2.0",
-    "electron-builder": "^22.4.1",
-    "electron-webpack": "^2.8.2",
-    "electron-webpack-eslint": "^6.0.0",
-    "electron-webpack-vue": "^2.4.0",
+    "@babel/eslint-parser": "^7.16.5",
+    "@vitejs/plugin-vue": "^1.9.3",
+    "@vue/cli": "^4.5.14",
+    "chalk": "^4.1.2",
+    "chokidar": "^3.5.2",
+    "cssnano": "^5.0.14",
+    "electron": "^15.3.4",
+    "electron-builder": "^22.13.1",
+    "electron-rebuild": "^3.2.5",
     "eslint": "^7.32.0",
     "eslint-config-standard": "^16.0.3",
     "eslint-plugin-html": "^6.2.0",
@@ -40,30 +30,29 @@
     "eslint-plugin-promise": "^5.2.0",
     "eslint-plugin-unicorn": "^39.0.0",
     "eslint-plugin-vue": "^8.2.0",
-    "nodemon": "^2.0.15",
-    "postcss": "^7.0.39",
+    "esm": "^3.2.25",
+    "node-devterm": "github:ThornWalli/node-devterm#feature/init",
     "postcss-html": "^1.3.0",
-    "postcss-loader": "^4.3.0",
-    "postcss-nesting": "^7.0.1",
-    "postcss-preset-env": "^6.7.0",
+    "postcss-nesting": "^10.1.1",
+    "postcss-preset-env": "^7.2.0",
     "stylelint": "^14.1.0",
     "stylelint-config-recess-order": "^3.0.0",
     "stylelint-config-standard": "^24.0.0",
-    "webpack": "~4.42.1"
+    "vite": "^2.6.10",
+    "vite-babel-plugin": "0.0.2",
+    "vite-svg-loader": "^3.1.1"
   },
-  "electronWebpack": {
-    "whiteListedModules": [
-      "@serialport"
-    ],
-    "renderer": {
-      "webpackConfig": "webpack/renderer.config.js"
-    },
-    "main": {
-      "webpackConfig": "webpack/main.config.js"
-    }
+  "dependencies": {
+    "events": "^3.3.0",
+    "socket.io": "^4.4.0",
+    "socket.io-client": "^4.4.0",
+    "vite-plugin-vue2": "^1.9.0",
+    "vite-plugin-vue2-svg": "^0.1.8",
+    "vue": "^2.6.14",
+    "vue-template-compiler": "^2.6.14"
   },
   "optionalDependencies": {
-    "serialport": "^9.2.8",
-    "canvas": "^9.2.8"
+    "canvas": "^2.8.0",
+    "serialport": "^9.2.8"
   }
 }

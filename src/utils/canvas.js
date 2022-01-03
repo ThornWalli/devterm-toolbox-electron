@@ -28,7 +28,7 @@ export const resizeCanvas = (canvas, width, height) => {
 };
 
 export const getCanvasFromUrl = async (dataUrl) => {
-  const img = new global.Image();
+  const img = new window.Image();
   await new Promise(resolve => {
     img.onload = () => resolve(img);
     img.src = dataUrl;

@@ -1,14 +1,17 @@
-
-import { ipcRenderer, remote } from 'electron';
+import { getDefaultConfig } from '@/../utils/config.js';
 
 export default class Config {
   constructor () {
     this.data = getDefaultConfig();
+    this.version = null;
+  }
+
+  async init () {
+    this.version = await window.electron.ipcRenderer.invoke('getCurrentVersion');
   }
 
   toJSON () {
-    const version = remote.app.getVersion();
-    return Object.assign({}, this.data, { version });
+    return Object.assign({}, this.data, { version: this.version });
   }
 
   get (name) {
@@ -25,19 +28,10 @@ export default class Config {
 
   save () {
     console.log(this.toJSON());
-    return ipcRenderer.invoke('saveConfig', this.toJSON());
+    return window.electron.ipcRenderer.invoke('saveConfig', this.toJSON());
   }
 
   async load () {
-    return (this.data = Object.assign(getDefaultConfig(), await ipcRenderer.invoke('loadConfig')));
+    return (this.data = Object.assign(getDefaultConfig(), await window.electron.ipcRenderer.invoke('loadConfig')));
   }
-}
-
-export const getDefaultConfig = () => {
-  return {
-    theme: 'amber',
-    host: null,
-    port: null,
-    startType: null
-  };
 };
