@@ -55,30 +55,32 @@ export const preparePreview = (canvas, colors) => {
   const ctx = canvas.getContext('2d');
 
   const imageData = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
-  grayscale(imageData.data, colors);
+
+  grayscale(imageData.data, [colors.printer.preview.foreground, colors.printer.preview.background]);
   ctx.putImageData(imageData, 0, 0);
   return canvas;
 };
+
 const grayscale = (data, colors) => {
   for (let i = 0; i < data.length; i += 4) {
     const brightness = ((data[i] + data[i + 1] + data[i + 2]) / 3) / 255;
     if (brightness < 0.6) {
-      data[i] = colors.primary[0];
-      data[i + 1] = colors.primary[1];
-      data[i + 2] = colors.primary[2];
+      data[i] = colors[0][0];
+      data[i + 1] = colors[0][1];
+      data[i + 2] = colors[0][2];
     } else {
-      data[i] = colors.secondary[0];
-      data[i + 1] = colors.secondary[1];
-      data[i + 2] = colors.secondary[2];
+      data[i] = colors[1][0];
+      data[i + 1] = colors[1][1];
+      data[i + 2] = colors[1][2];
     }
   }
 };
-export const getImageDataList = async (canvas) => {
-  const imageDatas = await splitCanvasInImageDataChunks(canvas);
 
+export const getBufferListFromCanvas = async (canvas) => {
+  const imageDatas = await splitCanvasInImageDataChunks(canvas);
   const commandBuffers = imageDatas.map(imageData => {
     return [Buffer.from(getWriteImageCommand(imageData.width, imageData.height))].concat(get8BitRowsFromImageData(imageData).map(row => uint8ArrayToBuffer(row)));
-  });
+  }).flat();
   return commandBuffers;
 };
 

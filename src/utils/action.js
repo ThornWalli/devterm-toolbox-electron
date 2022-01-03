@@ -1,10 +1,9 @@
 
 import { createCanvas, loadImage } from 'canvas';
 import { ALIGN, FONT } from 'node-devterm/config';
-import {
-  prepareCanvasForPrint
-} from 'node-devterm/utils/canvas';
-import { getImageDataList } from './canvas';
+import { getQRCode, getBarcode, prepareCanvasForPrint } from 'node-devterm/utils/canvas';
+import { getBufferListFromCanvas } from './canvas';
+
 export const getDefaultImageOptions = () => {
   return {
     file: null,
@@ -59,6 +58,18 @@ export const getDefaultBarcodeOptions = () => {
   };
 };
 
+const getCanvasFromUrl = async (url) => {
+  const img = await loadImage(url);
+  const canvas = createCanvas(img.naturalWidth, img.naturalHeight);
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(img, 0, 0);
+  return canvas;
+};
+const getBuffersFromCanvas = (canvas, imageOptions) => {
+  canvas = prepareCanvasForPrint(canvas, imageOptions);
+  return getBufferListFromCanvas(canvas);
+};
+
 export const ACTION_DEFINITIONS = {
   cutLine: {
     display: () => ({
@@ -68,38 +79,43 @@ export const ACTION_DEFINITIONS = {
   barcode: {
     display: (value) => ({
       title: 'Barcode',
-      value: value.text
+      value: value.text,
+      beforePrinterCommand: async (action) => {
+        const { text, options, imageOptions } = action.value;
+
+        const canvas = await getBarcode(text || 'empty', options || {});
+        action.value = getBuffersFromCanvas(canvas, imageOptions);
+        return action;
+      }
     })
   },
   qrCode: {
     display: (value) => ({
       title: 'QR Code',
       value: value.text
-    })
-  },
-  text: {
-    display: value => ({
-      title: 'Text',
-      value: `${value.slice(0, 16)}…`
-    })
+    }),
+    beforePrinterCommand: async (action) => {
+      const { text, options, imageOptions } = action.value;
+      const canvas = await getQRCode(text || 'empty', options || {});
+      action.value = getBuffersFromCanvas(canvas, imageOptions);
+      return action;
+    }
   },
   image: {
     display: () => ({
       title: 'Image'
     }),
     beforePrinterCommand: async (action) => {
-      const value = action.value;
-
-      const img = await loadImage(value.file);
-      let imageCanvas = createCanvas(img.naturalWidth, img.naturalHeight);
-      const imageContext = imageCanvas.getContext('2d');
-      imageContext.drawImage(img, 0, 0);
-
-      imageCanvas = prepareCanvasForPrint(imageCanvas, value.imageOptions);
-      action.value = await getImageDataList(imageCanvas);
-
+      const { file, imageOptions } = action.value;
+      action.value = getBuffersFromCanvas(await getCanvasFromUrl(file), imageOptions);
       return action;
     }
+  },
+  text: {
+    display: value => ({
+      title: 'Text',
+      value: `${value.slice(0, 16)}…`
+    })
   },
   feedPitch: {
     display: ({ type, value }) => ({

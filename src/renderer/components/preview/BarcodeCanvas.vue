@@ -79,9 +79,7 @@ export default {
         const ctx = this.$refs.canvas.getContext('2d');
         window.requestAnimationFrame(async () => {
           try {
-            const barcodeCanvas = await getBarcode(this.value.text || 'empty', {
-              ...(this.value.options || {})
-            });
+            const barcodeCanvas = await getBarcode(this.value.text || 'empty', this.value.options || {});
 
             const preparedCanvas = prepareCanvasForPrint(barcodeCanvas, this.value.imageOptions);
 

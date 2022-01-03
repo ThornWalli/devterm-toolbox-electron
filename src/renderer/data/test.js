@@ -14,6 +14,48 @@ export const writeHeadline = (text) => {
 
 export default [
   { type: 'text', value: 'Test' },
+  {
+    type: 'barcode',
+    value: {
+      text: 'Test 2000',
+      options: {
+        format: '',
+        height: 100,
+        font: 'monospace',
+        textAlign: 'center',
+        textPosition: 'bottom',
+        textMargin: 2,
+        fontSize: 20,
+        margin: 10,
+        displayValue: true,
+        flat: false
+      },
+      imageOptions: {
+        rotate: false,
+        flipX: false,
+        flipY: false,
+        width: null
+      }
+    }
+  },
+  {
+    type: 'qrCode',
+    value: {
+      text: 'Test 2000',
+      options: {
+        errorCorrectionLevel: 'M',
+        margin: 0,
+        scale: 4,
+        small: false
+      },
+      imageOptions: {
+        rotate: false,
+        flipX: false,
+        flipY: false,
+        width: null
+      }
+    }
+  },
   // { type: 'setAlign', value: ALIGN.CENTER },
   // {
   //   type: 'barcode',

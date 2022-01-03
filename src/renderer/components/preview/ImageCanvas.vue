@@ -68,9 +68,6 @@ export default {
         this.img.src = url;
       });
     },
-    getColor (opacity) {
-      return `rgb(${this.colors.primary.join(' ')} / ${opacity * 100}%)`;
-    },
     render () {
       window.requestAnimationFrame(() => {
         const imageCanvas = createCanvas(this.img.naturalWidth, this.img.naturalHeight);

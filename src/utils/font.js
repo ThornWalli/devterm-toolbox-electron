@@ -1,11 +1,16 @@
 import { FONT } from 'node-devterm/config';
 
+import font5x7ISO88591 from '@/assets/fonts/5x7-ISO8859-1.ttf';
+import font6x12ISO88591 from '@/assets/fonts/6x12-ISO8859-1.ttf';
+import font7x14ISO88591 from '@/assets/fonts/7x14-ISO8859-1.ttf';
+import fontPx437CompaqThin8x16 from '@/assets/fonts/Px437_CompaqThin_8x16.ttf';
+
 export const loadFonts = () => {
   const fonts = [
-    // ['5x7-ISO8859-1', `url(${require('@/assets/fonts/5x7-ISO8859-1.ttf').default})`],
-    // ['6x12-ISO8859-1', `url(${require('@/assets/fonts/6x12-ISO8859-1.ttf').default})`],
-    // ['7x14-ISO8859-1', `url(${require('@/assets/fonts/7x14-ISO8859-1.ttf').default})`],
-    // ['Px437_CompaqThin_8x16', `url(${require('@/assets/fonts/Px437_CompaqThin_8x16.ttf').default})`]
+    ['5x7-ISO8859-1', `url(${font5x7ISO88591})`],
+    ['6x12-ISO8859-1', `url(${font6x12ISO88591})`],
+    ['7x14-ISO8859-1', `url(${font7x14ISO88591})`],
+    ['Px437_CompaqThin_8x16', `url(${fontPx437CompaqThin8x16})`]
   ];
 
   return Promise.all(fonts.map(async (font) => {

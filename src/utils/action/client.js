@@ -54,17 +54,17 @@ export const getComponentByType = (type) => {
 };
 
 export const ACTION_DIALOGS = {
-  barcode: () => import('@/components/controls/actions/Barcode'),
-  qrCode: () => import('@/components/controls/actions/QrCode'),
-  text: () => import('@/components/controls/actions/Text'),
-  image: () => import('@/components/controls/actions/Image'),
-  feedPitch: () => import('@/components/controls/actions/FeedPitch'),
-  setAlign: () => import('@/components/controls/actions/SetAlign'),
-  setFont: () => import('@/components/controls/actions/SetFont'),
-  setLineSpace: () => import('@/components/controls/actions/SetLineSpace'),
-  setWordGap: () => import('@/components/controls/actions/SetWordGap'),
-  setMargin: () => import('@/components/controls/actions/SetMargin'),
-  setDensity: () => import('@/components/controls/actions/SetDensity')
+  barcode: () => import('@/components/controls/actions/Barcode.vue'),
+  qrCode: () => import('@/components/controls/actions/QrCode.vue'),
+  text: () => import('@/components/controls/actions/Text.vue'),
+  image: () => import('@/components/controls/actions/Image.vue'),
+  feedPitch: () => import('@/components/controls/actions/FeedPitch.vue'),
+  setAlign: () => import('@/components/controls/actions/SetAlign.vue'),
+  setFont: () => import('@/components/controls/actions/SetFont.vue'),
+  setLineSpace: () => import('@/components/controls/actions/SetLineSpace.vue'),
+  setWordGap: () => import('@/components/controls/actions/SetWordGap.vue'),
+  setMargin: () => import('@/components/controls/actions/SetMargin.vue'),
+  setDensity: () => import('@/components/controls/actions/SetDensity.vue')
 };
 
 /**
