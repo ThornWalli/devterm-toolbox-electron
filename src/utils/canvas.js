@@ -17,7 +17,7 @@ export const toDataURL = (targetCanvas) => {
   const ctx = canvas.getContext('2d');
   ctx.drawImage(targetCanvas, 0, 0);
   console.log('update Canvas', canvas);
-  return canvas.toDataURL();
+  return canvas.toDataURL('image/png', 100);
 };
 
 export const resizeCanvas = (canvas, width, height) => {

@@ -1,7 +1,8 @@
 /** @type {import('electron').IpcRenderer} */
-const { ipcRenderer, remote } = window.electron;
+const { ipcRenderer, remote, receive } = window.electron;
 
 export {
   ipcRenderer,
-  remote
+  remote,
+  receive
 };

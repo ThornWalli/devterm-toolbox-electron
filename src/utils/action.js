@@ -1,8 +1,7 @@
 
-import { createCanvas, loadImage } from 'canvas';
 import { ALIGN, FONT } from 'node-devterm/config';
 import { getQRCode, getBarcode, prepareCanvasForPrint } from 'node-devterm/utils/canvas';
-import { getBufferListFromCanvas } from './canvas';
+import { getBufferListFromCanvas, getCanvasFromUrl } from './canvas';
 
 export const getDefaultImageOptions = () => {
   return {
@@ -58,13 +57,6 @@ export const getDefaultBarcodeOptions = () => {
   };
 };
 
-const getCanvasFromUrl = async (url) => {
-  const img = await loadImage(url);
-  const canvas = createCanvas(img.naturalWidth, img.naturalHeight);
-  const ctx = canvas.getContext('2d');
-  ctx.drawImage(img, 0, 0);
-  return canvas;
-};
 const getBuffersFromCanvas = (canvas, imageOptions) => {
   canvas = prepareCanvasForPrint(canvas, imageOptions);
   return getBufferListFromCanvas(canvas);

@@ -1,13 +1,12 @@
 
 const fs = require('fs');
 const { resolve } = require('path');
-const { app } = require('electron');
+const { app, ipcMain } = require('electron');
 const esmRequire = require('esm')(module);
 const { getDefaultConfig } = esmRequire('../utils/config');
 
-const ipc = (server) => {
-  const { ipcMain } = require('electron');
-
+const ipc = (server, options) => {
+  let mainWindow;
   ipcMain.handle('startServer', async (event, port) => {
     try {
       return await server.start(port);
@@ -41,6 +40,35 @@ const ipc = (server) => {
   ipcMain.handle('saveConfig', (event, data) => {
     fs.promises.writeFile(configFile, JSON.stringify(data), 'utf-8');
   });
+
+  ipcMain.handle('window', (event, type, value) => {
+    switch (type) {
+      case 'minimize':
+        mainWindow.minimize();
+        break;
+      case 'maximize':
+        mainWindow.maximize();
+        break;
+      case 'fullscreen':
+        mainWindow.setFullScreen(value);
+        break;
+    }
+  });
+  ipcMain.handle('close', (event) => {
+    app.exit();
+  });
+
+  return {
+    registerWindow: (window) => {
+      mainWindow = window;
+      window.addListener('enter-full-screen', () => {
+        window.webContents.send('window', 'fullscreen', true);
+      });
+      window.addListener('leave-full-screen', () => {
+        window.webContents.send('window', 'fullscreen', false);
+      });
+    }
+  };
 };
 
 const getServerOptions = (server) => {

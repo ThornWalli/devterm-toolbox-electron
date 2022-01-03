@@ -5,10 +5,13 @@ const isDev = process.env.NODE_ENV === 'development';
 
 const server = new Server();
 
+const ipcControl = require('./ipc').default(server);
+
 function createWindow () {
   const mainWindow = new BrowserWindow({
-    width: 1200,
-    height: 600,
+    title: app.getName(),
+    width: 1280,
+    height: 480,
     webPreferences: {
       preload: Path.join(__dirname, 'preload.js'),
       nodeIntegration: true,
@@ -31,6 +34,8 @@ function createWindow () {
   mainWindow.on('closed', () => {
     server && server.stop();
   });
+
+  ipcControl.registerWindow(mainWindow);
 }
 
 app.whenReady().then(() => {
@@ -52,5 +57,3 @@ app.on('window-all-closed', function () {
 ipcMain.on('message', (event, message) => {
   console.log(message);
 });
-
-require('./ipc').default(server);

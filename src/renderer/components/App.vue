@@ -151,12 +151,14 @@ export default {
       currentView: VIEWS.PRINTER,
 
       ready: false,
-      fullscreen: false,
-      version: this.$config.version
+      fullscreen: false
     };
   },
 
   computed: {
+    version () {
+      return this.$config.version;
+    },
     colors () {
       return THEMES[this.$config.data.theme];
     },
@@ -193,36 +195,30 @@ export default {
       }
     }
     this.ready = true;
-    // eslint-disable-next-line no-use-before-define
-    // fullscreen
-    // const window = remote.getCurrentWindow();
-    // this.fullscreen = window.isFullScreen();
-    // window.addListener('enter-full-screen', () => {
-    //   this.fullscreen = true;
-    // });
-    // window.addListener('leave-full-screen', () => {
-    //   this.fullscreen = false;
-    // });
+
+    window.electron.ipcRendererReceive('window', (type, value) => {
+      switch (type) {
+        case 'fullscreen':
+          this.fullscreen = value;
+          break;
+      }
+    });
   },
   methods: {
 
     onClickMinimizeWindow () {
-      // const window = remote.getCurrentWindow();
-      window.minimize();
+      window.electron.ipcRenderer.invoke('window', 'minimize');
     },
     onClickMaximizeWindow () {
-      // const window = remote.getCurrentWindow();
-      window.maximize();
+      window.electron.ipcRenderer.invoke('window', 'maximize');
     },
 
     onClickFullscreen () {
-      // const window = remote.getCurrentWindow();
-      // window.setFullScreen(!this.fullscreen);
+      window.electron.ipcRenderer.invoke('window', 'fullscreen', !this.fullscreen);
     },
 
     onClickClose () {
-      // const window = remote.getCurrentWindow();
-      // window.close();
+      window.electron.ipcRenderer.invoke('close');
     },
 
     onClickSave () {

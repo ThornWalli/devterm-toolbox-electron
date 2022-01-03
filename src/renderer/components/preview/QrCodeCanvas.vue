@@ -92,7 +92,7 @@ export default {
             break;
         }
         ctx.drawImage(preparedCanvas, x, 0);
-        // preparePreview(ctx.canvas, this.colors);
+        preparePreview(ctx.canvas, this.colors);
       });
     }
   }

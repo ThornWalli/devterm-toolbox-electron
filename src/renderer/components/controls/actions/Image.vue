@@ -76,6 +76,9 @@ export default {
         }, 500);
       },
       deep: true
+    },
+    colors () {
+      this.render();
     }
   },
   mounted () {
