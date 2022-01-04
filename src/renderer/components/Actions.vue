@@ -107,7 +107,6 @@ export default {
       ACTION_DIALOGS,
       getComponentByType,
       selectedActionId: null,
-      //   selectedAction: null,
       createAction: null,
       actionTypeOptions: getActionTypeOptions(),
       itemStates: {},
@@ -127,6 +126,10 @@ export default {
   },
   watch: {
 
+    value (value) {
+      this.model = [...value];
+    },
+
     model: {
       handler (value) {
         this.itemStates = Object.fromEntries(value.map(({ id }) => [id, false]));
@@ -139,14 +142,6 @@ export default {
       action && (itemStates[action.id] = true);
       this.itemStates = itemStates;
       this.$emit('selectAction', action);
-      // if (action) {
-      //   const anchorEl = document.querySelector(`#anchor-action-${action.id}`);
-      //   this.$nextTick(() => {
-      //     window.requestAnimationFrame(() => {
-      //       anchorEl && anchorEl.scrollIntoView({ block: 'center', behavior: 'smooth' });
-      //     });
-      //   });
-      // }
     },
 
     createAction (selectedAction) {

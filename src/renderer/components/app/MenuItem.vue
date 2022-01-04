@@ -1,7 +1,7 @@
 <template>
   <li class="app-menu-item" :class="{'selected': selected}">
     <base-generic-button v-bind="$attrs" v-on="$listeners">
-      <slot />
+      <slot>{{ text }}</slot>
     </base-generic-button>
   </li>
 </template>
@@ -17,6 +17,10 @@ export default {
     selected: {
       type: Boolean,
       default: false
+    },
+    text: {
+      type: String,
+      default: null
     }
   }
 

@@ -2,29 +2,7 @@
 <template>
   <div class="app" :style="style" :class="{ready}">
     <app-menu class="header">
-      <app-menu-item :selected="currentView === VIEWS.INFO" @click="currentView = VIEWS.INFO">
-        Info
-      </app-menu-item>
-      <app-menu-item :selected="currentView === VIEWS.PRINTER" @click="currentView = VIEWS.PRINTER">
-        Printer
-      </app-menu-item>
-      <app-menu-spacer><button class="header-drag" /></app-menu-spacer>
-      <app-menu-item @click="onClickNew">
-        New
-      </app-menu-item>
-      <app-menu-divider />
-      <app-menu-item @click="onClickSave">
-        Save
-      </app-menu-item>
-      <app-menu-item @click="onClickLoad">
-        Load
-      </app-menu-item>
-      <app-menu-item @click="onClickOptions">
-        Options
-      </app-menu-item>
-      <app-menu-item @click="onClickClose">
-        Close
-      </app-menu-item>
+      <component :is="item.component" v-for="(item, index) in headerItems" :key="index" v-bind="item.props" v-on="item.on" />
     </app-menu>
     <div class="app-content">
       <view-start v-if="!$client.connected && ready" @apply="onApplyViewStart" />
@@ -32,27 +10,7 @@
       <view-info v-else-if="currentView === VIEWS.INFO" />
     </div>
     <app-menu class="footer">
-      <app-menu-item @click="onClickMinimizeWindow">
-        Minimize
-      </app-menu-item>
-      <app-menu-item @click="onClickMaximizeWindow">
-        Maximize
-      </app-menu-item>
-      <app-menu-item :selected="fullscreen" @click="onClickFullscreen">
-        Fullscreen
-      </app-menu-item>
-      <app-menu-spacer />
-      <app-menu-text class="connection" :class="{'connected': $server.options.active}" @click="showServerDialog">
-        <span>{{ $server.options.active ? `Server Port: ${$server.options.port}` : 'Server Offline' }}</span>
-      </app-menu-text>
-      <app-menu-divider />
-      <app-menu-text class="connection" :class="{'connected': clientConnected}" @click="showRemoteDialog">
-        <span>{{ clientConnected ? `Online (${$client.host}:${$client.port})` : 'Offline' }}</span>
-      </app-menu-text>
-      <app-menu-divider />
-      <app-menu-text class="info-version">
-        {{ version }}
-      </app-menu-text>
+      <component :is="item.component" v-for="(item, index) in footerItems" :key="index" v-bind="item.props" v-on="item.on" />
     </app-menu>
     <dialog-error v-for="(error,index) in $errorList.errors" v-bind="error" :key="index" init-open />
     <dialog-remote ref="dialogRemote" />
@@ -164,6 +122,130 @@ export default {
   },
 
   computed: {
+
+    headerItems () {
+      const printerItems = [
+        {
+          component: AppMenuItem,
+          on: {
+            click: this.onClickNew
+          },
+          props: { text: 'New' }
+        },
+        {
+          component: AppMenuDivider
+        },
+        {
+          component: AppMenuItem,
+          on: {
+            click: this.onClickSave
+          },
+          props: { text: 'Save' }
+        },
+        {
+          component: AppMenuItem,
+          title: 'Load',
+          on: {
+            click: this.onClickLoad
+          },
+          props: { text: 'Load' }
+        },
+        {
+          component: AppMenuItem,
+          on: {
+            click: this.onClickOptions
+          },
+          props: { text: 'Options' }
+        }
+      ];
+
+      return [
+        {
+          component: AppMenuItem,
+          on: {
+            click: () => (this.currentView = VIEWS.INFO)
+          },
+          props: { selected: this.currentView === VIEWS.INFO, text: 'Info' }
+        },
+        {
+          component: AppMenuItem,
+          on: {
+            click: () => (this.currentView = VIEWS.PRINTER)
+          },
+          props: { selected: this.currentView === VIEWS.PRINTER, text: 'Printer' }
+        },
+        {
+          component: AppMenuSpacer
+        },
+        ...((this.currentView === VIEWS.PRINTER && printerItems) || []),
+        {
+          component: AppMenuDivider
+        },
+        {
+          component: AppMenuItem,
+          on: {
+            click: this.onClickClose
+          },
+          props: { text: 'Close' }
+        }
+
+      ];
+    },
+
+    footerItems () {
+      return [
+        {
+          component: AppMenuItem,
+          on: {
+            click: this.onClickMinimizeWindow
+          },
+          props: { text: 'Minimize' }
+        },
+        {
+          component: AppMenuItem,
+          on: {
+            click: this.onClickMaximizeWindow
+          },
+          props: { text: 'Maximize' }
+        },
+        {
+          component: AppMenuItem,
+          on: {
+            click: this.onClickFullscreen
+          },
+          props: { selected: this.fullscreen, text: 'Fullscreen' }
+        },
+        {
+          component: AppMenuSpacer
+        },
+        {
+          component: AppMenuText,
+          on: {
+            click: this.showServerDialog
+          },
+          props: { class: { connection: true, connected: this.$server.options.active }, text: `${this.$server.options.active ? `Server Port: ${this.$server.options.port}` : 'Server Offline'}` }
+        },
+        {
+          component: AppMenuDivider
+        },
+        {
+          component: AppMenuText,
+          on: {
+            click: this.showRemoteDialog
+          },
+          props: { class: { connection: true, connected: this.clientConnected }, text: `${this.clientConnected ? `Online (${this.$client.host}:${this.$client.port})` : 'Offline'}` }
+        },
+        {
+          component: AppMenuDivider
+        },
+        {
+          component: AppMenuText,
+          props: { class: 'info-version', text: this.version }
+        }
+
+      ];
+    },
+
     version () {
       return this.$config.version;
     },
@@ -273,7 +355,7 @@ export default {
     }
 
   }
-}; ;
+};
 
 </script>
 

@@ -1,12 +1,19 @@
 <template>
   <li class="app-menu-text" v-bind="$attrs" v-on="$listeners">
-    <slot />
+    <slot><span v-html="text" /></slot>
   </li>
 </template>
 
 <script>
 export default {
-  inheritAttrs: false
+  inheritAttrs: false,
+
+  props: {
+    text: {
+      type: String,
+      default: null
+    }
+  }
 };
 </script>
 <style lang="postcss" scoped>

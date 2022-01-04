@@ -3,9 +3,6 @@
     <div :key="JSON.stringify(colors)" class="printer-preview">
       <div>
         <div :class="{'has-selected': selectedAction}">
-          <div v-if="previewItems.length < 1" class="actions-empty">
-            Add a Action!
-          </div>
           <div v-for="(item, index) in previewItems" :id="`anchor-action-${item.id}`" :key="index" :class="{'selected' : selectedAction && selectedAction.id === item.id}">
             <component
               :is="item.component"
@@ -32,6 +29,9 @@
       :colors="colors"
       @selectAction="selectedAction = $event"
     />
+    <div v-if="actions.length < 1" class="actions-empty">
+      Add a Action!
+    </div>
   </app-view>
 </template>
 
@@ -160,10 +160,14 @@ export default {
   display: flex;
 
   & .actions-empty {
+    position: absolute;
+    top: 0;
+    right: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 120px;
+    width: 100%;
+    height: 100%;
   }
 
   & .print-button {
