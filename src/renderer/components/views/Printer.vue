@@ -36,12 +36,14 @@
 </template>
 
 <script>
+import { filter } from 'rxjs/operators';
 import AppView from '@/components/app/View.vue';
 import InputIconButton from '@/components/inputs/IconButton.vue';
 import InputTextButton from '@/components/inputs/TextButton.vue';
 import InputDropDown from '@/components/inputs/DropDown.vue';
 import Actions from '@/components/Actions.vue';
 import { executeActions } from '@/../utils/action/client';
+import { keyUpObserver } from '@/utils/dom';
 
 export default {
   components: {
@@ -114,6 +116,14 @@ export default {
   },
   mounted () {
     this.render();
+
+    this.subscriptions = [
+      keyUpObserver.pipe(filter(({ key }) => key === 'PrintScreen'))
+        .subscribe((e) => this.print())
+    ];
+  },
+  destroyed () {
+    this.subscriptions.forEach(subscription => subscription.unsubscribe());
   },
 
   methods: {
@@ -129,8 +139,12 @@ export default {
       }, 500);
     },
 
+    print () {
+      return this.$client.executeActions(this.actions);
+    },
+
     onClickPrint () {
-      this.$client.executeActions(this.actions);
+      this.print();
     }
 
   }

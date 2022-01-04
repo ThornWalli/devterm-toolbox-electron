@@ -40,7 +40,6 @@ class Server {
     return new Promise((resolve, reject) => {
       this.port = port || this.port;
       this.server.listen(port, async () => {
-        console.log('XXX');
         try {
           this.disabled = !await hasPrinterSerialPort();
           if (this.disabled) {
@@ -84,7 +83,6 @@ class Server {
 
 const onSocketExecuteActions = (printer, disabled) => async (actions) => {
   // prepare actions
-  console.log(actions);
   const preparedActions = actions.map(action => {
     if (action.type in ACTION_PRINTER_COMMANDS) {
       return (printer) => ACTION_PRINTER_COMMANDS[action.type](printer, action.value);

@@ -17,7 +17,7 @@
 
 <script>
 import { filter } from 'rxjs/operators';
-import { keyUpObserver } from '@/../utils/dom';
+import { keyUpObserver } from '@/utils/dom';
 export default {
   inheritAttrs: true,
   props: {

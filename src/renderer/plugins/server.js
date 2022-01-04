@@ -27,7 +27,6 @@ class ServerControl {
 
   async refresh () {
     serverControl.options = await window.electron.ipcRenderer.invoke('getServerOptions');
-    console.log('serverControl.options', serverControl.options);
   }
 }
 
