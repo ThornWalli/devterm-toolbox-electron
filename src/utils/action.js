@@ -71,14 +71,14 @@ export const ACTION_DEFINITIONS = {
   barcode: {
     display: (value) => ({
       title: 'Barcode',
-      value: value.text,
-      beforePrinterCommand: async (action) => {
-        const { text, options, imageOptions } = action.value;
-        const canvas = await getBarcode(text || 'empty', options || {});
-        action.value = getBuffersFromCanvas(canvas, imageOptions);
-        return action;
-      }
-    })
+      value: value.text
+    }),
+    beforePrinterCommand: async (action) => {
+      const { text, options, imageOptions } = action.value;
+      const canvas = await getBarcode(text || 'empty', options || {});
+      action.value = await getBuffersFromCanvas(canvas, imageOptions);
+      return action;
+    }
   },
   qrCode: {
     display: (value) => ({
@@ -88,7 +88,7 @@ export const ACTION_DEFINITIONS = {
     beforePrinterCommand: async (action) => {
       const { text, options, imageOptions } = action.value;
       const canvas = await getQRCode(text || 'empty', options || {});
-      action.value = getBuffersFromCanvas(canvas, imageOptions);
+      action.value = await getBuffersFromCanvas(canvas, imageOptions);
       return action;
     }
   },
@@ -98,7 +98,7 @@ export const ACTION_DEFINITIONS = {
     }),
     beforePrinterCommand: async (action) => {
       const { file, imageOptions } = action.value;
-      action.value = getBuffersFromCanvas(await getCanvasFromUrl(file), imageOptions);
+      action.value = await getBuffersFromCanvas(await getCanvasFromUrl(file), imageOptions);
       return action;
     }
   },
