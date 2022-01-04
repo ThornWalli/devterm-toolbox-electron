@@ -78,7 +78,6 @@ export default {
   },
 
   data () {
-    console.log(this.value);
     return {
       actions: [].concat(this.value),
       previewItems: [],
@@ -101,6 +100,16 @@ export default {
     actions () {
       this.render();
       this.$emit('input', this.actions);
+    },
+    selectedAction (selectedAction) {
+      if (selectedAction) {
+        const anchorEl = document.querySelector(`#anchor-action-${selectedAction.id}`);
+        this.$nextTick(() => {
+          window.requestAnimationFrame(() => {
+            anchorEl && anchorEl.scrollIntoView({ block: 'center', behavior: 'smooth' });
+          });
+        });
+      }
     }
   },
   mounted () {

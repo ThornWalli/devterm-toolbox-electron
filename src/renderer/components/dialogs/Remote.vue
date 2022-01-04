@@ -60,6 +60,7 @@ export default {
     async onClickConnect () {
       try {
         await this.$client.connect(this.port, this.host);
+        this.close();
       } catch (error) {
         console.error(error);
       }

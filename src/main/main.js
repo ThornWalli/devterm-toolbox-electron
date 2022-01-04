@@ -35,7 +35,9 @@ function createWindow () {
     server && server.stop();
   });
 
-  ipcControl.registerWindow(mainWindow);
+  mainWindow.on('show', () => {
+    ipcControl.registerWindowEvents(mainWindow);
+  });
 }
 
 app.whenReady().then(() => {
@@ -52,8 +54,4 @@ app.whenReady().then(() => {
 
 app.on('window-all-closed', function () {
   if (process.platform !== 'darwin') app.quit();
-});
-
-ipcMain.on('message', (event, message) => {
-  console.log(message);
 });

@@ -139,14 +139,14 @@ export default {
       action && (itemStates[action.id] = true);
       this.itemStates = itemStates;
       this.$emit('selectAction', action);
-      if (action) {
-        const anchorEl = document.querySelector(`#anchor-action-${action.id}`);
-        this.$nextTick(() => {
-          window.requestAnimationFrame(() => {
-            anchorEl && anchorEl.scrollIntoView({ block: 'center', behavior: 'smooth' });
-          });
-        });
-      }
+      // if (action) {
+      //   const anchorEl = document.querySelector(`#anchor-action-${action.id}`);
+      //   this.$nextTick(() => {
+      //     window.requestAnimationFrame(() => {
+      //       anchorEl && anchorEl.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      //     });
+      //   });
+      // }
     },
 
     createAction (selectedAction) {
@@ -157,7 +157,7 @@ export default {
           this.selectedActionId = null;
           const anchorEl = this.$refs.list.querySelector(`#anchor-action-item-${action.id}`);
           anchorEl && anchorEl.scrollIntoView({ block: 'center' });
-          window.setTimeout(() => {
+          !!ACTION_DIALOGS[action.type] && window.setTimeout(() => {
             this.selectedActionId = action.id;
           }, 600);
         });
@@ -199,7 +199,6 @@ export default {
     updateAction (action, value) {
       const actions = this.model;
       const index = actions.indexOf(action);
-      console.log('updateAction', index, value);
       actions[index] = {
         ...actions[index],
         value

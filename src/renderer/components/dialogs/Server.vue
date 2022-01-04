@@ -94,7 +94,8 @@ export default {
     async onClickStart () {
       try {
         await this.$server.start(this.port);
-        await this.$client.connect(this.port, this.$server.options.hosts[0]);
+        this.autoConnect && await this.$client.connect(this.port, this.$server.options.hosts[0]);
+        this.autoConnect && this.close();
       } catch (error) {
         this.$errorList.add(error);
       }

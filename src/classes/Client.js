@@ -54,7 +54,7 @@ export default class Client extends EventEmitter {
   }
 
   disconnect () {
-    this.socket.disconnect();
+    this.socket.destroy();
     this.socket = null;
     this.connected = false;
   }

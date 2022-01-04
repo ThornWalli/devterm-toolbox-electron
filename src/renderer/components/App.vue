@@ -9,6 +9,10 @@
         Printer
       </app-menu-item>
       <app-menu-spacer><button class="header-drag" /></app-menu-spacer>
+      <app-menu-item @click="onClickNew">
+        New
+      </app-menu-item>
+      <app-menu-divider />
       <app-menu-item @click="onClickSave">
         Save
       </app-menu-item>
@@ -54,11 +58,6 @@
     <dialog-remote ref="dialogRemote" />
     <dialog-server ref="dialogServer" />
     <dialog-options ref="dialogOptions" />
-    <transition name="fade">
-      <div class="status-layer">
-        Initialize…
-      </div>
-    </transition>
   </div>
 </template>
 <script>
@@ -229,8 +228,12 @@ export default {
       window.electron.ipcRenderer.invoke('close');
     },
 
-    async onClickSave () {
-      await window.electron.ipcRenderer.invoke('save', this.printerTemplate);
+    onClickNew () {
+      this.printerTemplate = [];
+    },
+
+    onClickSave () {
+      return window.electron.ipcRenderer.invoke('save', this.printerTemplate);
     },
     async onClickLoad () {
       const template = await window.electron.ipcRenderer.invoke('load');
@@ -243,7 +246,7 @@ export default {
     },
 
     async onApplyViewStart ({ type, remember }) {
-      this.$config.set('startType', remember && type);
+      this.$config.set('startType', (remember && type) || '');
       await this.$config.save();
       this.$client.once('connect', async () => {
         this.$config.set('host', this.$client.host);
@@ -292,24 +295,6 @@ export default {
   }
 }
 
-.status-layer {
-  position: absolute;
-  top: 0;
-  left: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  background: rgb(0 0 0 / 80%);
-  transition: opacity 0.3s 1s;
-
-  @nest .ready & {
-    pointer-events: none;
-    opacity: 0;
-  }
-}
-
 .connection {
   color: red;
 
@@ -336,6 +321,12 @@ export default {
   color: var(--color-primary);
   user-select: none;
   background: var(--color-secondary);
+  opacity: 0;
+  transition: opacity 0.6s ease-in;
+
+  &.ready {
+    opacity: 1;
+  }
 
   & > .header {
     border-bottom: solid var(--color-primary) calc(2 / 16 * 1em);

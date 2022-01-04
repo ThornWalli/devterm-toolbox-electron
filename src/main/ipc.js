@@ -1,12 +1,11 @@
 
 const fs = require('fs');
-const { resolve, join } = require('path');
-const { app, ipcMain, dialog } = require('electron');
+const { resolve } = require('path');
+const { app, ipcMain, dialog, BrowserWindow } = require('electron');
 const esmRequire = require('esm')(module);
 const { getDefaultConfig } = esmRequire('../utils/config');
 
 const ipc = (server, options) => {
-  let mainWindow;
   ipcMain.handle('startServer', async (event, port) => {
     try {
       return await server.start(port);
@@ -28,7 +27,7 @@ const ipc = (server, options) => {
 
   const userDataPath = app.getPath('userData');
   const configFile = resolve(userDataPath, 'config.json');
-  console.log('configFile', configFile);
+
   ipcMain.handle('loadConfig', async (event) => {
     try {
       return JSON.parse(await fs.promises.readFile(configFile, 'utf-8'));
@@ -42,15 +41,16 @@ const ipc = (server, options) => {
   });
 
   ipcMain.handle('window', (event, type, value) => {
+    const window = BrowserWindow.getFocusedWindow();
     switch (type) {
       case 'minimize':
-        mainWindow.minimize();
+        window.minimize();
         break;
       case 'maximize':
-        mainWindow.maximize();
+        window.maximize();
         break;
       case 'fullscreen':
-        mainWindow.setFullScreen(value && !mainWindow.isFullScreen());
+        window.setFullScreen(value && !window.isFullScreen());
         break;
     }
   });
@@ -103,10 +103,8 @@ const ipc = (server, options) => {
   });
 
   return {
-    registerWindow: (window) => {
-      mainWindow = window;
+    registerWindowEvents: (window) => {
       window.addListener('enter-full-screen', () => {
-        console.log('enter-full-screen');
         window.webContents.send('window', 'fullscreen', true);
       });
       window.addListener('leave-full-screen', () => {

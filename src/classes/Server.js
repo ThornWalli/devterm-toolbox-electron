@@ -27,6 +27,7 @@ class Server {
     this.printer = createPrinter();
     this.printer.debug = true;
     this.io = new SocketIoServer(this.server);
+    this.io.on('connection', this.onIoConnection.bind(this));
   }
 
   get hosts () {
@@ -39,6 +40,7 @@ class Server {
     return new Promise((resolve, reject) => {
       this.port = port || this.port;
       this.server.listen(port, async () => {
+        console.log('XXX');
         try {
           this.disabled = !await hasPrinterSerialPort();
           if (this.disabled) {
@@ -47,7 +49,6 @@ class Server {
           !this.disabled && await this.printer.connect();
           this.active = true;
           console.log(`listening on \`*:${port}\``);
-          this.io.on('connection', this.onIoConnection.bind(this));
           resolve();
         } catch (error) {
           this.io.emit('error', error);
@@ -68,9 +69,9 @@ class Server {
     socket.on('executeActions', onSocketExecuteActions(this.printer, this.disabled));
     socket.on('getInfo', onSocketGetInfo);
     // #####
-    socket.on('disconnect', () => {
+    socket.on('disconnect', (a) => {
       this.sockets.delete(socket.id);
-      console.log('user disconnected');
+      console.log('user disconnected', a);
     });
   }
 

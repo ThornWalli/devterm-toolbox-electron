@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 
 import { ALIGN, FONT, MAX_DENSITY } from 'node-devterm/config';
-import devtermUri from '@/dataUris/devterm';
+import devtermUri from './uris/devterm';
 
 export const writeHeadline = (text) => {
   return [
@@ -14,6 +14,7 @@ export const writeHeadline = (text) => {
 };
 
 export default [
+  { type: 'reset' },
   { type: 'setAlign', value: ALIGN.CENTER },
   {
     type: 'barcode',
@@ -130,6 +131,7 @@ export default [
       { type: 'text', value: `Density ${index}` }
     ];
   }).flat(),
+  { type: 'reset' },
   { type: 'feedPitch', value: { value: 14, type: 'font' } }
 
   // { type: 'setDensity', value: 15 },

@@ -27,7 +27,6 @@ export default class Config {
   }
 
   save () {
-    console.log(this.toJSON());
     return window.electron.ipcRenderer.invoke('saveConfig', this.toJSON());
   }
 
