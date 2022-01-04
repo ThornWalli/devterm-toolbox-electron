@@ -41,11 +41,7 @@ import InputIconButton from '@/components/inputs/IconButton.vue';
 import InputTextButton from '@/components/inputs/TextButton.vue';
 import InputDropDown from '@/components/inputs/DropDown.vue';
 import Actions from '@/components/Actions.vue';
-
-import testData from '@/data/test';
-
 import { executeActions } from '@/../utils/action/client';
-import ActionDescription from '@/../classes/ActionDescription';
 
 export default {
   components: {
@@ -72,12 +68,19 @@ export default {
           }
         };
       }
+    },
+    value: {
+      type: Array,
+      default () {
+        return [];
+      }
     }
   },
 
   data () {
+    console.log(this.value);
     return {
-      actions: exampleData(),
+      actions: [].concat(this.value),
       previewItems: [],
       loading: true,
       selectedAction: null
@@ -92,8 +95,12 @@ export default {
     }
   },
   watch: {
+    value (value) {
+      this.actions = value;
+    },
     actions () {
       this.render();
+      this.$emit('input', this.actions);
     }
   },
   mounted () {
@@ -120,10 +127,6 @@ export default {
   }
 
 };
-
-function exampleData () {
-  return testData.map(data => new ActionDescription(data));
-}
 
 </script>
 

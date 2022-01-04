@@ -1,7 +1,7 @@
 
 const fs = require('fs');
-const { resolve } = require('path');
-const { app, ipcMain } = require('electron');
+const { resolve, join } = require('path');
+const { app, ipcMain, dialog } = require('electron');
 const esmRequire = require('esm')(module);
 const { getDefaultConfig } = esmRequire('../utils/config');
 
@@ -56,6 +56,50 @@ const ipc = (server, options) => {
   });
   ipcMain.handle('close', (event) => {
     app.exit();
+  });
+
+  ipcMain.handle('save', (event, data) => {
+    return dialog.showSaveDialog({
+      title: 'Save template',
+      defaultPath: 'template.json',
+      buttonLabel: 'Save',
+      filters: [
+        {
+          name: 'JSON',
+          extensions: ['json']
+        }],
+      properties: []
+    }).then(async ({ canceled, filePath }) => {
+      if (!canceled) {
+        await fs.promises.writeFile(filePath.toString(), JSON.stringify(data));
+      }
+    }).catch(err => {
+      console.error(err);
+    });
+  });
+
+  ipcMain.handle('load', async (event) => {
+    const data = await dialog.showOpenDialog({
+      title: 'Load template',
+      // defaultPath: 'template.json',
+      buttonLabel: 'Save',
+      filters: [
+        {
+          name: 'JSON',
+          extensions: ['json']
+        }],
+      properties: [
+        'openFile'
+      ]
+    }).then(async ({ canceled, filePaths }) => {
+      if (!canceled) {
+        return JSON.parse(await fs.promises.readFile(filePaths.toString(), 'utf-8'));
+      }
+      return null;
+    }).catch(err => {
+      console.error(err);
+    });
+    return data;
   });
 
   return {

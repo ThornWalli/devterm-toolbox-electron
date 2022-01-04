@@ -1,6 +1,6 @@
 
 <template>
-  <div class="app" :style="style" :class="{ ready}">
+  <div class="app" :style="style" :class="{ready}">
     <app-menu class="header">
       <app-menu-item :selected="currentView === VIEWS.INFO" @click="currentView = VIEWS.INFO">
         Info
@@ -9,10 +9,10 @@
         Printer
       </app-menu-item>
       <app-menu-spacer><button class="header-drag" /></app-menu-spacer>
-      <app-menu-item disabled @click="onClickSave">
+      <app-menu-item @click="onClickSave">
         Save
       </app-menu-item>
-      <app-menu-item disabled @click="onClickLoad">
+      <app-menu-item @click="onClickLoad">
         Load
       </app-menu-item>
       <app-menu-item @click="onClickOptions">
@@ -24,7 +24,7 @@
     </app-menu>
     <div class="app-content">
       <view-start v-if="!$client.connected && ready" @apply="onApplyViewStart" />
-      <view-printer v-else-if="currentView === VIEWS.PRINTER" :colors="colors" />
+      <view-printer v-else-if="currentView === VIEWS.PRINTER" v-model="printerTemplate" :colors="colors" />
       <view-info v-else-if="currentView === VIEWS.INFO" />
     </div>
     <app-menu class="footer">
@@ -61,7 +61,8 @@
     </transition>
   </div>
 </template>
-<script>/* eslint-disable vue/no-unused-components */
+<script>
+/* eslint-disable vue/no-unused-components */
 import { loadFonts } from '@/../utils/font';
 
 import AppMenu from '@/components/app/Menu.vue';
@@ -77,6 +78,9 @@ import DialogOptions from '@/components/dialogs/Options.vue';
 import ViewPrinter from '@/components/views/Printer.vue';
 import ViewStart from '@/components/views/Start.vue';
 import ViewInfo from '@/components/views/Info.vue';
+
+import testData from '@/data/test';
+import ActionDescription from '@/../classes/ActionDescription';
 
 const VIEWS = {
   NONE: null,
@@ -128,6 +132,10 @@ const THEMES = {
   }
 };
 
+function exampleData () {
+  return testData.map(data => new ActionDescription(data));
+}
+
 export default {
   components: {
     ViewPrinter,
@@ -151,7 +159,8 @@ export default {
       currentView: VIEWS.PRINTER,
 
       ready: false,
-      fullscreen: false
+      fullscreen: false,
+      printerTemplate: exampleData()
     };
   },
 
@@ -191,7 +200,6 @@ export default {
           await this.$client.connect(port, host);
         }
       } catch (error) {
-        this.$errorList.add(error);
       }
     }
     this.ready = true;
@@ -221,41 +229,15 @@ export default {
       window.electron.ipcRenderer.invoke('close');
     },
 
-    onClickSave () {
-      // const fs = require('fs');
-      // const path = require('path');
-      // const electron = require('electron');
-      // const dialog = electron.remote.dialog;
-      // dialog.showSaveDialog({
-      //   title: 'Select the File Path to save',
-      //   defaultPath: path.join(__dirname, '../assets/sample.txt'),
-      //   // defaultPath: path.join(__dirname, '../assets/'),
-      //   buttonLabel: 'Save',
-      //   // Restricting the user to only Text Files.
-      //   filters: [
-      //     {
-      //       name: 'Text Files',
-      //       extensions: ['txt', 'docx']
-      //     }],
-      //   properties: []
-      // }).then(file => {
-      //   // Stating whether dialog operation was cancelled or not.
-      //   console.log(file.canceled);
-      //   if (!file.canceled) {
-      //     console.log(file.filePath.toString());
-
-      //     // Creating and Writing to the sample.txt file
-      //     fs.writeFile(file.filePath.toString(),
-      //       'This is a Sample File', function (err) {
-      //         if (err) throw err;
-      //         console.log('Saved!');
-      //       });
-      //   }
-      // }).catch(err => {
-      //   console.log(err);
-      // });
+    async onClickSave () {
+      await window.electron.ipcRenderer.invoke('save', this.printerTemplate);
     },
-    onClickLoad () {},
+    async onClickLoad () {
+      const template = await window.electron.ipcRenderer.invoke('load');
+      if (template) {
+        this.printerTemplate = template;
+      }
+    },
     onClickOptions () {
       this.showOptionsDialog();
     },

@@ -1,8 +1,15 @@
-
+/**
+ * Wichtig: Beim senden eines Bildes gibt es einen Workaround da node-canvas im Electron auf dem DevTerm im Main abstürtzt.
+ * Alle bilder werden im Client vorbereitet und als Buffer dem Printer direkt übergeben.
+ */
 const ACTION_PRINTER_COMMANDS = {
   cutLine: (printer) => printer.addCutLine(),
-  barcode: (printer, value) => printer.writeBarcode(value.text, value.options, value.imageOptions),
-  qrCode: (printer, value) => printer.writeQRCode(value.text, value.options, value.imageOptions),
+  barcode: (printer, value) => value.flat().reduce((result, buffer) => {
+    return result.then(() => printer.write(buffer));
+  }, Promise.resolve()),
+  qrCode: (printer, value) => value.flat().reduce((result, buffer) => {
+    return result.then(() => printer.write(buffer));
+  }, Promise.resolve()),
   text: (printer, value) => printer.writeLine(value),
   image: (printer, value) => value.flat().reduce((result, buffer) => {
     return result.then(() => printer.write(buffer));

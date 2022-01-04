@@ -1,17 +1,11 @@
 const http = require('http');
 const fs = require('fs');
 const { Server: SocketIoServer } = require('socket.io');
-const { SERIAL_PORT_IN, getThermalPrinterPort } = require('node-devterm/utils/devterm');
-// import { createPrinter } from 'node-devterm';
+const { SERIAL_PORT_IN } = require('node-devterm/utils/devterm');
 
-const { getCanvasFromImage } = require('node-devterm/utils/canvas');
-const { Printer } = require('node-devterm');
+const { createPrinter } = require('node-devterm');
 const { getNetworkAddresses } = require('../main/utils/network');
-const { ACTION_PRINTER_COMMANDS } = require('../main/utils/actions');
-
-const createPrinter = () => {
-  return new Printer(getThermalPrinterPort());
-};
+const { ACTION_PRINTER_COMMANDS } = require('../main/utils/action');
 
 const hasPrinterSerialPort = async () => {
   try {
@@ -32,6 +26,7 @@ class Server {
     this.server = http.createServer();
     this.printer = createPrinter();
     this.printer.debug = true;
+    this.io = new SocketIoServer(this.server);
   }
 
   get hosts () {
@@ -43,7 +38,6 @@ class Server {
   start (port) {
     return new Promise((resolve, reject) => {
       this.port = port || this.port;
-      this.io = new SocketIoServer(this.server);
       this.server.listen(port, async () => {
         try {
           this.disabled = !await hasPrinterSerialPort();
@@ -65,8 +59,7 @@ class Server {
 
   async stop () {
     console.log('server stop');
-    await new Promise(resolve => this.io && this.io.close(resolve));
-    await new Promise(resolve => { this.server.close(resolve); });
+    await new Promise(resolve => (this.io && this.io.close(resolve)) || resolve());
     this.active = false;
     this.sockets = new Map();
   }

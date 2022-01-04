@@ -134,7 +134,6 @@ export default {
       immediate: true
     },
     selectedAction (action, lastAction) {
-      console.log(action, lastAction);
       const itemStates = { ...this.itemStates };
       lastAction && (itemStates[lastAction.id] = false);
       action && (itemStates[action.id] = true);
@@ -167,7 +166,6 @@ export default {
   },
   mounted () {
     this.subscriptions = [fromEvent(window, 'dragenter').subscribe((e) => {
-      console.log(e);
       if (e.target.closest('li [data-id]')) {
         const el = e.target.closest('li [data-id]');
         this.dragTargetId = el.dataset.id;

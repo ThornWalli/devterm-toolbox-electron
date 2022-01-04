@@ -74,7 +74,6 @@ export const ACTION_DEFINITIONS = {
       value: value.text,
       beforePrinterCommand: async (action) => {
         const { text, options, imageOptions } = action.value;
-
         const canvas = await getBarcode(text || 'empty', options || {});
         action.value = getBuffersFromCanvas(canvas, imageOptions);
         return action;

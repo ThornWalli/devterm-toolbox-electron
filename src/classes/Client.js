@@ -14,11 +14,13 @@ export default class Client extends EventEmitter {
       // reconnectionDelayMax: 10000,
       autoConnect: false,
       reconnection: false,
-      secure
+      secure,
+      transports: ['websocket']
     });
-    this.socket = await new Promise(resolve => {
+    this.socket = await new Promise((resolve, reject) => {
       socket.on('connect_error', (error) => {
         this.emit('error', error);
+        reject(error);
       });
       socket.on('connect', () => {
         this.connected = socket.connected;
