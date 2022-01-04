@@ -50,7 +50,7 @@ const ipc = (server, options) => {
         mainWindow.maximize();
         break;
       case 'fullscreen':
-        mainWindow.setFullScreen(value);
+        mainWindow.setFullScreen(value && !mainWindow.isFullScreen());
         break;
     }
   });
@@ -106,6 +106,7 @@ const ipc = (server, options) => {
     registerWindow: (window) => {
       mainWindow = window;
       window.addListener('enter-full-screen', () => {
+        console.log('enter-full-screen');
         window.webContents.send('window', 'fullscreen', true);
       });
       window.addListener('leave-full-screen', () => {
