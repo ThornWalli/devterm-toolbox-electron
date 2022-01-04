@@ -10,6 +10,7 @@
     "build:win": "node scripts/build-vue.js && electron-builder -c config/electron-builder.json --win",
     "build:mac": "node scripts/build-vue.js && electron-builder -c config/electron-builder.json --mac",
     "build:linux": "node scripts/build-vue.js && electron-builder -c config/electron-builder.json --linux",
+    "build:devterm": "node scripts/build-vue.js && electron-builder -c config/electron-builder.json --linux deb rpm --arm64 --armv7l",
     "rebuild": "electron-rebuild -f -w @serialport"
   },
   "devDependencies": {
