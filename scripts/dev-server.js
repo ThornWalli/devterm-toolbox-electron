@@ -2,7 +2,7 @@ process.env.NODE_ENV = 'development';
 
 const ChildProcess = require('child_process');
 const Path = require('path');
-const { exit } = require('process');
+// const { exit } = require('process');
 const Vite = require('vite');
 const Chalk = require('chalk');
 const Chokidar = require('chokidar');
