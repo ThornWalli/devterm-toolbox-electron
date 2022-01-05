@@ -31,7 +31,7 @@ jobs:
       - name: Install Dependencies
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
-          brew install pkg-config cairo pango libpng jpeg giflib
+          sudo apt-get install build-essential libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev
           npm ci
       - name: Test
         run: npm run test
