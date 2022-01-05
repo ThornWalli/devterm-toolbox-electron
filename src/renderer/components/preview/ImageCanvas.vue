@@ -1,5 +1,8 @@
 <template>
-  <canvas />
+  <div>
+    <preview-text-canvas v-if="error" :value="error.message" :colors="colors" :options="options" />
+    <canvas v-else ref="canvas" />
+  </div>
 </template>
 
 <script>
@@ -7,7 +10,10 @@ import { createCanvas, prepareCanvasForPrint } from 'node-devterm/utils/canvas';
 import { ALIGN } from 'node-devterm/config';
 import { preparePreview } from '@/../utils/canvas';
 
+import PreviewTextCanvas from '@/components/preview/TextCanvas.vue';
+
 export default {
+  components: { PreviewTextCanvas },
   props: {
     colors: {
       type: Object,
@@ -36,6 +42,7 @@ export default {
   },
   data () {
     return {
+      error: null,
       ctx: null,
       img: null
     };
@@ -50,9 +57,6 @@ export default {
     }
   },
   async mounted () {
-    this.$el.width = this.width;
-    this.ctx = this.$el.getContext('2d');
-
     this.value.file && await this.changeImage(this.value.file);
     this.render();
   },
@@ -69,33 +73,40 @@ export default {
       });
     },
     render () {
-      window.requestAnimationFrame(() => {
-        const imageCanvas = createCanvas(this.img.naturalWidth, this.img.naturalHeight);
-        const imageContext = imageCanvas.getContext('2d');
-        imageContext.drawImage(this.img, 0, 0);
+      this.error = null;
+      this.$nextTick(() => {
+        const ctx = this.$refs.canvas.getContext('2d');
+        window.requestAnimationFrame(() => {
+          try {
+            const imageCanvas = createCanvas(this.img.naturalWidth, this.img.naturalHeight);
+            const imageContext = imageCanvas.getContext('2d');
+            imageContext.drawImage(this.img, 0, 0);
 
-        const preparedCanvas = prepareCanvasForPrint(imageCanvas, this.value.imageOptions);
+            const preparedCanvas = prepareCanvasForPrint(imageCanvas, this.value.imageOptions);
 
-        const ctx = this.ctx;
-        ctx.canvas.width = this.width;
-        ctx.canvas.height = preparedCanvas.height;
+            ctx.canvas.width = this.width;
+            ctx.canvas.height = preparedCanvas.height;
 
-        const width = this.width;
-        const margin = parseInt(this.options.margin * width);
-        let x = 0;
-        switch (this.options.align) {
-          case ALIGN.RIGHT:
-            x += this.width - preparedCanvas.width;
-            break;
-          case ALIGN.CENTER:
-            x += (this.width - preparedCanvas.width) / 2;
-            break;
-          default:
-            x += margin;
-            break;
-        }
-        ctx.drawImage(preparedCanvas, x, 0);
-        preparePreview(ctx.canvas, this.colors);
+            const width = this.width;
+            const margin = parseInt(this.options.margin * width);
+            let x = 0;
+            switch (this.options.align) {
+              case ALIGN.RIGHT:
+                x += this.width - preparedCanvas.width;
+                break;
+              case ALIGN.CENTER:
+                x += (this.width - preparedCanvas.width) / 2;
+                break;
+              default:
+                x += margin;
+                break;
+            }
+            ctx.drawImage(preparedCanvas, x, 0);
+            preparePreview(ctx.canvas, this.colors);
+          } catch (error) {
+            this.error = error;
+          }
+        });
       });
     }
   }

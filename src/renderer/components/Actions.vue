@@ -51,6 +51,7 @@
       </div>
     </div>
     <div class="add-action">
+      [{{ createAction }}]
       <input-drop-down v-model="createAction" :options="actionTypeOptions" :label="null" />
     </div>
     <component
@@ -149,6 +150,7 @@ export default {
         const action = createAction(selectedAction);
         this.updateModel([].concat(this.model, action));
         this.$nextTick(() => {
+          this.createAction = '';
           this.selectedActionId = null;
           const anchorEl = this.$refs.list.querySelector(`#anchor-action-item-${action.id}`);
           anchorEl && anchorEl.scrollIntoView({ block: 'center' });

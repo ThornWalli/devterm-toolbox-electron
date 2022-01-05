@@ -156,11 +156,14 @@ export default {
             click: this.onClickOptions
           },
           props: { text: 'Options' }
+        },
+        {
+          component: AppMenuDivider
         }
       ];
 
       return [
-        {
+        ...((this.$client.connected && [{
           component: AppMenuItem,
           on: {
             click: () => (this.currentView = VIEWS.INFO)
@@ -173,14 +176,11 @@ export default {
             click: () => (this.currentView = VIEWS.PRINTER)
           },
           props: { selected: this.currentView === VIEWS.PRINTER, text: 'Printer' }
-        },
+        }]) || []),
         {
           component: AppMenuSpacer
         },
-        ...((this.currentView === VIEWS.PRINTER && printerItems) || []),
-        {
-          component: AppMenuDivider
-        },
+        ...((this.$client.connected && this.currentView === VIEWS.PRINTER && printerItems) || []),
         {
           component: AppMenuItem,
           on: {

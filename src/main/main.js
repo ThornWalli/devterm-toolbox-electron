@@ -1,5 +1,5 @@
 const Path = require('path');
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow } = require('electron');
 const Server = require('../classes/Server').default;
 const isDev = process.env.NODE_ENV === 'development';
 

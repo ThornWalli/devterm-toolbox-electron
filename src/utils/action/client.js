@@ -29,6 +29,7 @@ export const getActionTypeOptions = () => {
     new DropDownOptionDescription({ title: 'Set Density', value: 'setDensity' }),
     new DropDownOptionDescription({ title: 'Set LineSpace', value: 'setLineSpace' }),
     new DropDownOptionDescription({ title: 'Set WordGap', value: 'setWordGap' }),
+    new DropDownOptionDescription({ title: 'Feed Pitch', value: 'feedPitch' }),
     new DropDownOptionDescription({ title: 'Reset', value: 'reset' }),
     new DropDownOptionDescription({ title: 'Image', value: 'image' }),
     new DropDownOptionDescription({ title: 'QRCode', value: 'qrCode' }),
@@ -89,6 +90,9 @@ export const createAction = (type) => {
       break;
     case 'setAlign':
       value = ALIGN.LEFT;
+      break;
+    case 'feedPitch':
+      value = { value: 1, type: 'font' };
       break;
     case 'text':
       value = 'Text';

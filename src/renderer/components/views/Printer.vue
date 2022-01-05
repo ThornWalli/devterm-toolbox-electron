@@ -168,6 +168,7 @@ export default {
     justify-content: center;
     width: 100%;
     height: 100%;
+    pointer-events: none;
   }
 
   & .print-button {

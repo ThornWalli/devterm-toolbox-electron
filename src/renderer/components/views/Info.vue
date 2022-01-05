@@ -7,12 +7,6 @@
           <fieldset>
             <legend>General</legend>
             <table>
-              <!-- <thead>
-                <tr>
-                  <td>Sensor</td>
-                  <td>C</td>
-                </tr>
-              </thead> -->
               <tbody>
                 <tr>
                   <td>DevTerm Type:</td>
@@ -41,11 +35,11 @@
               <tbody>
                 <tr>
                   <td>Printer:</td>
-                  <td>{{ data.printerTemperature }}</td>
+                  <td>{{ data.printerTemperature.toFixed(2) }}</td>
                 </tr>
                 <tr v-for="(value, index) in data.temperatures" :key="index">
                   <td>Zone {{ index+1 }}:</td>
-                  <td>{{ value }}</td>
+                  <td>{{ value.toFixed(2) }}</td>
                 </tr>
               </tbody>
             </table>

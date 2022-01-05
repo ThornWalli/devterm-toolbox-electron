@@ -9,9 +9,9 @@
 import { getBarcode, prepareCanvasForPrint } from 'node-devterm/utils/canvas';
 import { ALIGN } from 'node-devterm/config';
 import { preparePreview } from '@/../utils/canvas';
+import { getDefaultBarcodeOptions } from '@/../utils/action';
 
 import PreviewTextCanvas from '@/components/preview/TextCanvas.vue';
-import { getDefaultBarcodeOptions } from '@/../utils/action';
 
 export default {
   components: { PreviewTextCanvas },
@@ -41,8 +41,8 @@ export default {
   },
   data () {
     return {
-      ctx: null,
-      error: null
+      error: null,
+      ctx: null
     };
   },
 

@@ -3,7 +3,7 @@ const fs = require('fs');
 const { Server: SocketIoServer } = require('socket.io');
 const { SERIAL_PORT_IN } = require('node-devterm/utils/devterm');
 
-const { createPrinter } = require('node-devterm');
+const { createPrinter, getThermalPrinterTemperature, getTemperatures, isDevTermA06, getBattery } = require('node-devterm');
 const { getNetworkAddresses } = require('../main/utils/network');
 const { ACTION_PRINTER_COMMANDS } = require('../main/utils/action');
 
@@ -102,12 +102,12 @@ const onSocketExecuteActions = (printer, disabled) => async (actions) => {
   return true;
 };
 
-const onSocketGetInfo = (value, reply) => {
+const onSocketGetInfo = async (value, reply) => {
   reply({
-    printerTemperature: 0,
-    temperatures: [0, 0, 0, 0],
-    type: 'AXX',
-    battery: 100
+    printerTemperature: await getThermalPrinterTemperature(),
+    temperatures: await getTemperatures(),
+    type: await isDevTermA06() ? 'A06' : '',
+    battery: await getBattery()
   });
 };
 
