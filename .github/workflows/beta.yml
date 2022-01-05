@@ -30,7 +30,9 @@ jobs:
           key: ${{ matrix.os }}-node-v${{ matrix.node }}-deps-${{ hashFiles(format('{0}{1}', github.workspace, '/package-lock.json')) }}
       - name: Install Dependencies
         if: steps.cache.outputs.cache-hit != 'true'
-        run: npm ci
+        run: |
+          brew install pkg-config cairo pango libpng jpeg giflib
+          npm ci
       - name: Test
         run: npm run test
 
