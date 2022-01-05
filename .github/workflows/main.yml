@@ -36,7 +36,7 @@ jobs:
 
   semantic-version:
     name: Semantic Release
-    needs: build
+    needs: install
     runs-on: ${{ matrix.os }}
 
     strategy:
