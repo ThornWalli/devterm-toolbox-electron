@@ -66,7 +66,7 @@ class Server {
 
   registerEvents (socket) {
     socket.on('executeActions', onSocketExecuteActions(this.printer, this.disabled));
-    socket.on('getInfo', onSocketGetInfo);
+    socket.on('getInfo', onSocketGetInfo(this.io));
     // #####
     socket.on('disconnect', (a) => {
       this.sockets.delete(socket.id);
@@ -102,13 +102,17 @@ const onSocketExecuteActions = (printer, disabled) => async (actions) => {
   return true;
 };
 
-const onSocketGetInfo = async (value, reply) => {
-  reply({
-    printerTemperature: await getThermalPrinterTemperature(),
-    temperatures: await getTemperatures(),
-    type: await isDevTermA06() ? 'A06' : '',
-    battery: await getBattery()
-  });
+const onSocketGetInfo = io => async (value, reply) => {
+  try {
+    reply({
+      printerTemperature: await getThermalPrinterTemperature(),
+      temperatures: await getTemperatures(),
+      type: await isDevTermA06() ? 'A06' : '',
+      battery: await getBattery()
+    });
+  } catch (error) {
+    io.emit('error', error);
+  }
 };
 
 module.exports = {

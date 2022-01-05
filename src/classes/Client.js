@@ -18,6 +18,9 @@ export default class Client extends EventEmitter {
       transports: ['websocket']
     });
     this.socket = await new Promise((resolve, reject) => {
+      socket.on('error', (error) => {
+        this.emit('error', error);
+      });
       socket.on('connect_error', (error) => {
         this.emit('error', error);
         reject(error);

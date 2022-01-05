@@ -129,14 +129,18 @@ export default {
   methods: {
 
     render () {
-      this.loading = true;
-      window.clearTimeout(this.renderTimeout);
-      this.renderTimeout = window.setTimeout(() => {
-        this.previewItems = executeActions(this.actions);
-        this.$nextTick(() => {
-          this.loading = false;
-        });
-      }, 500);
+      if (this.actions.length) {
+        this.loading = true;
+        window.clearTimeout(this.renderTimeout);
+        this.renderTimeout = window.setTimeout(() => {
+          this.previewItems = executeActions(this.actions);
+          this.$nextTick(() => {
+            this.loading = false;
+          });
+        }, 500);
+      } else {
+        this.previewItems = [];
+      }
     },
 
     print () {

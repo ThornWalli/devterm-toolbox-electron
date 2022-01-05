@@ -7,7 +7,7 @@ class ErrorList {
   }
 
   add (message, title) {
-    if (message instanceof Error) {
+    if (typeof message === 'object') {
       console.error(message);
       message.type && (title = message.type);
       message = message.message;

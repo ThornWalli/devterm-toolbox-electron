@@ -51,7 +51,6 @@
       </div>
     </div>
     <div class="add-action">
-      [{{ createAction }}]
       <input-drop-down v-model="createAction" :options="actionTypeOptions" :label="null" />
     </div>
     <component
