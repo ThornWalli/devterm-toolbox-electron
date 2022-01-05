@@ -68,8 +68,9 @@
 
 <script>/* eslint-disable vue/no-unused-components */
 import { fromEvent } from 'rxjs';
-import { ACTION_DEFINITIONS } from '@/../utils/action';
-import { createAction, getComponentByType, getActionTypeOptions, ACTION_DIALOGS } from '@/../utils/action/client';
+import ACTION_DEFINITIONS from '@/utils/action/definitions';
+import ACTION_DIALOGS from '@/utils/action/dialogs';
+import { getActionTypeOptions, createAction, getComponentByType } from '@/utils/action';
 
 import InputIconButton from '@/components/inputs/IconButton.vue';
 import InputDropDown from '@/components/inputs/DropDown.vue';

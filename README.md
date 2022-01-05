@@ -1,8 +1,25 @@
 # devterm-toolbox-electron
 
-## Install
+Electron App for printing with DevTerm thermal printer via `/tmp/DEVTERM_PRINTER_IN`.
+
+## Usage
+
+**Important:** On the DevTerm and further systems the appropriate libraries for `node-canvas` must be installed.
+
+https://github.com/Automattic/node-canvas#compiling 
 
 
-### Important
+```bash
+# install
+npm i 
 
-1. https://github.com/Automattic/node-canvas#compiling install packages.
+# dev 
+npm run dev
+
+# build
+npm run build:win # uses windows as build target
+npm run build:mac # uses mac as build target
+npm run build:linux # uses linux as build target
+```
+
+Optional configuration options can be found in the [Electron Builder CLI docs](https://www.electron.build/cli.html).

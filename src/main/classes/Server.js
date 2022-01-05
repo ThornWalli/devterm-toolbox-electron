@@ -4,8 +4,8 @@ const { Server: SocketIoServer } = require('socket.io');
 const { SERIAL_PORT_IN } = require('node-devterm/utils/devterm');
 
 const { createPrinter, getThermalPrinterTemperature, getTemperatures, isDevTermA06, getBattery } = require('node-devterm');
-const { getNetworkAddresses } = require('../main/utils/network');
-const { ACTION_PRINTER_COMMANDS } = require('../main/utils/action');
+const { getNetworkAddresses } = require('../utils/network');
+const { ACTION_PRINTER_COMMANDS } = require('../utils/action');
 
 const hasPrinterSerialPort = async () => {
   try {
@@ -111,6 +111,7 @@ const onSocketGetInfo = io => async (value, reply) => {
       battery: await getBattery()
     });
   } catch (error) {
+    console.log(error.message);
     io.emit('error', error);
   }
 };

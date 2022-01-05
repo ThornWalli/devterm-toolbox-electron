@@ -30,7 +30,7 @@
 <script>
 import { prepareCanvasForPrint } from 'node-devterm/utils/canvas';
 import { MAX_IMAGE_WIDTH } from '@/../utils/config';
-import { getCanvasFromUrl, preparePreview, resizeCanvas, toDataURL } from '@/../utils/canvas';
+import { getCanvasFromUrl, preparePreview, resizeCanvas, toDataURL } from '@/utils/canvas';
 
 import ActionDialog from '@/components/controls/ActionDialog.vue';
 import MixinDialog from '@/mixins/Dialog.vue';
@@ -38,7 +38,7 @@ import MixinDialog from '@/mixins/Dialog.vue';
 import InputCheckBox from '@/components/inputs/CheckBox.vue';
 import InputTextField from '@/components/inputs/TextField.vue';
 import InputFileSelect from '@/components/inputs/FileSelect.vue';
-import { getDefaultImageOptions } from '@/../utils/action';
+import { getDefaultImageOptions } from '@/utils/action';
 export default {
   components: { ActionDialog, InputCheckBox, InputTextField, InputFileSelect },
   mixins: [MixinDialog],

@@ -8,8 +8,8 @@
 <script>
 import { getQRCode, prepareCanvasForPrint } from 'node-devterm/utils/canvas';
 import { ALIGN } from 'node-devterm/config';
-import { preparePreview } from '@/../utils/canvas';
-import { getDefaultQRCodeOptions } from '@/../utils/action';
+import { preparePreview } from '@/utils/canvas';
+import { getDefaultQRCodeOptions } from '@/utils/action';
 
 import PreviewTextCanvas from '@/components/preview/TextCanvas.vue';
 

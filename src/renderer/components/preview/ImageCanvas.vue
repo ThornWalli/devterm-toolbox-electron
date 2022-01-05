@@ -8,7 +8,7 @@
 <script>
 import { createCanvas, prepareCanvasForPrint } from 'node-devterm/utils/canvas';
 import { ALIGN } from 'node-devterm/config';
-import { preparePreview } from '@/../utils/canvas';
+import { preparePreview } from '@/utils/canvas';
 
 import PreviewTextCanvas from '@/components/preview/TextCanvas.vue';
 

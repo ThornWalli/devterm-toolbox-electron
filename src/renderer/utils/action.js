@@ -1,6 +1,5 @@
 
 import { DEFAULT_DENSITY, ALIGN, FONT, getDefaultConfig, MAX_PIXELS_FONT } from 'node-devterm/config';
-import { getDefaultBarcodeOptions, getDefaultImageOptions, getDefaultQRCodeOptions } from '../action';
 import ActionSetAlign from '@/components/controls/actions/SetAlign.vue';
 import ActionSetFont from '@/components/controls/actions/SetFont.vue';
 import ActionSetMargin from '@/components/controls/actions/SetMargin.vue';
@@ -18,7 +17,7 @@ import PreviewImageCanvas from '@/components/preview/ImageCanvas.vue';
 import PreviewQrCodeCanvas from '@/components/preview/QrCodeCanvas.vue';
 import PreviewBarcodeCanvas from '@/components/preview/BarcodeCanvas.vue';
 import PreviewFeedPitch from '@/components/preview/FeedPitch.vue';
-import ActionDescription from '@/../classes/ActionDescription';
+import ActionDescription from '@/classes/ActionDescription';
 
 export const getActionTypeOptions = () => {
   return [
@@ -52,20 +51,6 @@ export const getComponentByType = (type) => {
     setWordGap: ActionSetWordGap,
     feedPitch: ActionFeedPitch
   }[type];
-};
-
-export const ACTION_DIALOGS = {
-  barcode: () => import('@/components/controls/actions/Barcode.vue'),
-  qrCode: () => import('@/components/controls/actions/QrCode.vue'),
-  text: () => import('@/components/controls/actions/Text.vue'),
-  image: () => import('@/components/controls/actions/Image.vue'),
-  feedPitch: () => import('@/components/controls/actions/FeedPitch.vue'),
-  setAlign: () => import('@/components/controls/actions/SetAlign.vue'),
-  setFont: () => import('@/components/controls/actions/SetFont.vue'),
-  setLineSpace: () => import('@/components/controls/actions/SetLineSpace.vue'),
-  setWordGap: () => import('@/components/controls/actions/SetWordGap.vue'),
-  setMargin: () => import('@/components/controls/actions/SetMargin.vue'),
-  setDensity: () => import('@/components/controls/actions/SetDensity.vue')
 };
 
 /**
@@ -215,4 +200,58 @@ export const executeAction = (action, options) => {
       };
   }
   return null;
+};
+
+export const getDefaultImageOptions = () => {
+  return {
+    file: null,
+    imageOptions: {
+      grayscale: false,
+      rotate: false,
+      flipX: false,
+      flipY: false,
+      width: null
+    }
+  };
+};
+export const getDefaultQRCodeOptions = () => {
+  return {
+    text: 'Sample',
+    options: {
+      errorCorrectionLevel: 'M',
+      margin: 0,
+      scale: 4,
+      small: false
+    },
+    imageOptions: {
+      rotate: false,
+      flipX: false,
+      flipY: false,
+      width: null
+    }
+  };
+};
+
+export const getDefaultBarcodeOptions = () => {
+  return {
+    text: 'Sample',
+    options: {
+      format: '',
+      height: 100,
+      font: 'monospace',
+      textAlign: 'center',
+      textPosition: 'bottom',
+      textMargin: 2,
+      fontSize: 20,
+      margin: 10,
+      displayValue: true,
+      flat: false
+    },
+    imageOptions: {
+      rotate: false,
+      flipX: false,
+      flipY: false,
+      width: null
+    }
+  };
 };

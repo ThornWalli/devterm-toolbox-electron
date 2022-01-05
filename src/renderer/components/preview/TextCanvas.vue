@@ -4,7 +4,7 @@
 
 <script>
 import { ALIGN, MAX_DENSITY } from 'node-devterm/config';
-import { FONT_MAP } from '@/../utils/font';
+import { FONT_MAP } from '@/utils/font';
 
 export default {
   props: {

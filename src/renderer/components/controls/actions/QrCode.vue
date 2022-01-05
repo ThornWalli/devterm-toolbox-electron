@@ -60,7 +60,7 @@ import InputTextField from '@/components/inputs/TextField.vue';
 import InputTextBox from '@/components/inputs/TextBox.vue';
 
 import { DropDownOptionDescription } from '@/components/base/DropDown.vue';
-import { getDefaultQRCodeOptions } from '@/../utils/action';
+import { getDefaultQRCodeOptions } from '@/utils/action';
 export default {
   components: { ActionDialog, InputCheckBox, InputDropDown, InputTextField, InputTextBox },
   mixins: [MixinDialog],

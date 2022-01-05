@@ -1,68 +1,8 @@
-
 import { ALIGN, FONT } from 'node-devterm/config';
-import { getQRCode, getBarcode, prepareCanvasForPrint } from 'node-devterm/utils/canvas';
-import { getBufferListFromCanvas, getCanvasFromUrl } from './canvas';
+import { getQRCode, getBarcode } from 'node-devterm/utils/canvas';
+import { getCanvasFromUrl, getBuffersFromCanvas } from '../canvas';
 
-export const getDefaultImageOptions = () => {
-  return {
-    file: null,
-    imageOptions: {
-      grayscale: false,
-      rotate: false,
-      flipX: false,
-      flipY: false,
-      width: null
-    }
-  };
-};
-export const getDefaultQRCodeOptions = () => {
-  return {
-    text: 'Sample',
-    options: {
-      errorCorrectionLevel: 'M',
-      margin: 0,
-      scale: 4,
-      small: false
-    },
-    imageOptions: {
-      rotate: false,
-      flipX: false,
-      flipY: false,
-      width: null
-    }
-  };
-};
-
-export const getDefaultBarcodeOptions = () => {
-  return {
-    text: 'Sample',
-    options: {
-      format: '',
-      height: 100,
-      font: 'monospace',
-      textAlign: 'center',
-      textPosition: 'bottom',
-      textMargin: 2,
-      fontSize: 20,
-      margin: 10,
-      displayValue: true,
-      flat: false
-    },
-    imageOptions: {
-      rotate: false,
-      flipX: false,
-      flipY: false,
-      width: null
-    }
-  };
-};
-
-const getBuffersFromCanvas = (canvas, imageOptions) => {
-  canvas = prepareCanvasForPrint(canvas, imageOptions);
-  return getBufferListFromCanvas(canvas);
-};
-
-export const ACTION_DEFINITIONS = {
+export default {
   cutLine: {
     display: () => ({
       title: 'Cut Line'

@@ -1,7 +1,7 @@
 
 import Vue from 'vue';
 import errorList from './error';
-import Client from '@/../classes/Client';
+import Client from '@/classes/Client';
 
 const client = Vue.observable(new Client());
 client.on('error', (error) => {

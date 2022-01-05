@@ -1,6 +1,6 @@
 import EventEmitter from 'events';
 import { io } from 'socket.io-client';
-import { ACTION_DEFINITIONS } from '@/../utils/action';
+import ACTION_DEFINITIONS from '@/utils/action/definitions';
 export default class Client extends EventEmitter {
   constructor () {
     super();

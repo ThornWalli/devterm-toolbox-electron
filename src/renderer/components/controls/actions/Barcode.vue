@@ -95,8 +95,8 @@ import InputTextField from '@/components/inputs/TextField.vue';
 import InputTextBox from '@/components/inputs/TextBox.vue';
 
 import { DropDownOptionDescription } from '@/components/base/DropDown.vue';
-import { FONT_MAP } from '@/../utils/font';
-import { getDefaultBarcodeOptions } from '@/../utils/action';
+import { FONT_MAP } from '@/utils/font';
+import { getDefaultBarcodeOptions } from '@/utils/action';
 
 export default {
   // eslint-disable-next-line vue/no-unused-components

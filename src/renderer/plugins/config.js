@@ -1,6 +1,6 @@
 
 import Vue from 'vue';
-import Config from '@/../classes/Config';
+import Config from '@/classes/Config';
 
 const config = Vue.observable(new Config());
 

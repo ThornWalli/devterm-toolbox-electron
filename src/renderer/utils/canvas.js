@@ -1,4 +1,5 @@
 import { Buffer } from 'buffer';
+import { prepareCanvasForPrint } from 'node-devterm/utils/canvas';
 import {
   MAX_DOTS,
   ASCII_GS,
@@ -110,4 +111,9 @@ export const uint8ArrayToBuffer = function (array) {
     buf[i] = view[i];
   }
   return buf;
+};
+
+export const getBuffersFromCanvas = (canvas, imageOptions) => {
+  canvas = prepareCanvasForPrint(canvas, imageOptions);
+  return getBufferListFromCanvas(canvas);
 };

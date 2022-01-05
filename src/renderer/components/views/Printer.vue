@@ -42,7 +42,7 @@ import InputIconButton from '@/components/inputs/IconButton.vue';
 import InputTextButton from '@/components/inputs/TextButton.vue';
 import InputDropDown from '@/components/inputs/DropDown.vue';
 import Actions from '@/components/Actions.vue';
-import { executeActions } from '@/../utils/action/client';
+import { executeActions } from '@/utils/action';
 import { keyUpObserver } from '@/utils/dom';
 
 export default {

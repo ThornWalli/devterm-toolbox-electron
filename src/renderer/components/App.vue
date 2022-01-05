@@ -20,7 +20,7 @@
 </template>
 <script>
 /* eslint-disable vue/no-unused-components */
-import { loadFonts } from '@/../utils/font';
+import { loadFonts } from '@/utils/font';
 
 import AppMenu from '@/components/app/Menu.vue';
 import AppMenuItem from '@/components/app/MenuItem.vue';
@@ -37,7 +37,7 @@ import ViewStart from '@/components/views/Start.vue';
 import ViewInfo from '@/components/views/Info.vue';
 
 import testData from '@/data/test';
-import ActionDescription from '@/../classes/ActionDescription';
+import ActionDescription from '@/classes/ActionDescription';
 
 const VIEWS = {
   NONE: null,
